@@ -90,6 +90,24 @@ const router = new Router({
       component: () => import("@/views/admin/Product"),
     },
     {
+      path: '/admin/product/create',
+      name: 'ProductCreate',
+      meta: { title: 'Tạo sản phẩm', layout: 'default' },
+      component: () => import("@/views/admin/ProductCreate"),
+    },
+    {
+      path: '/admin/product/update/:id',
+      name: 'ProductUpdate',
+      meta: { title: 'Cập nhật sản phẩm', layout: 'default' },
+      component: () => import("@/views/admin/ProductCreate"),
+    },
+    {
+      path: '/admin/product',
+      name: 'ProductManagement',
+      meta: { title: 'Quản lý sản phẩm', layout: 'default' },
+      component: () => import("@/views/admin/Product"),
+    },
+    {
       path: '/admin/product-category',
       name: 'ProductCategoryManagement',
       meta: { title: 'Quản lý loại sản phẩm', layout: 'default' },

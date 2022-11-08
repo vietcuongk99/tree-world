@@ -172,7 +172,6 @@
         currentData: Object.assign({}, { ...initCategory }),
         dataFilter: Object.assign({}, initDataFilter),
         currentCategory: null,
-        maxLengthPassword: PASSWORD_LENGTH,
         inputTypePassword: 'password',
         fields: [
           { key: "key", label: "STT", tdClass: 'align-middle', thClass: 'align-middle', visible: true, thStyle: { width: '4%' } },

@@ -25,6 +25,39 @@ const actions = {
       resolve(response)
     })
   },
+  [FETCH_PRODUCTS_AVAILABLE](context, payload) {
+    return new Promise(async resolve => {
+      let response = await baseMixins.methods.getWithBigInt('/rest/products/listProduct')
+      if (response && response.status === 200 && response.data) {
+        context.commit("setProducts", response.data.data)
+      }
+      resolve(response)
+    })
+  },
+  [FETCH_PRODUCT_BY_ID](context, productId) {
+    return new Promise(async resolve => {
+      let response = await baseMixins.methods.getWithBigInt('/rest/products', productId)
+      resolve(response)
+    })
+  },
+  [CREATE_PRODUCT](context, payload) {
+    return new Promise(async resolve => {
+      let response = await baseMixins.methods.put(`/rest/products`, payload)
+      resolve(response)
+    })
+  },
+  [UPDATE_PRODUCT](context, payload) {
+    return new Promise(async resolve => {
+      let response = await baseMixins.methods.put(`/rest/products/${payload.productId}`, payload.productData)
+      resolve(response)
+    })
+  },
+  [DISABLE_PRODUCT](context, productId) {
+    return new Promise(async resolve => {
+      let response = await baseMixins.methods.put(`/rest/products/disable/${productId}`)
+      resolve(response)
+    })
+  },
 }
 
 export default {

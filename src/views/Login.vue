@@ -153,7 +153,6 @@ export default {
       this.$message.closeAll();
       
       const isAdmin = StorageService.get("userInfo") && JSON.parse(StorageService.get("userInfo")).role === '[ADMIN]'
-      console.log(StorageService.get("userInfo"))
       // const savedPath = localStorage.getItem('savedPath');
       router.push(isAdmin ? '/admin' : "/")
         .catch((e) => {

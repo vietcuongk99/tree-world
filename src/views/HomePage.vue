@@ -775,11 +775,9 @@ export default {
       const res = await this.getWithBigInt('/rest/products/listProduct')
       if (res.success) {
         this.listCategory = res.data
-        console.log(this.listCategory)
       }
     },
     onPageChanged(page) {
-      console.log(page)
       this.pagination.currentPage = page
       this.productListPaginate = this.listProduct.slice(
         (page - 1) * this.pagination.perPage,
