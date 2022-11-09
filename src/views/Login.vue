@@ -111,6 +111,8 @@ export default {
   components: {},
   mixins: [baseMixins],
   mounted() {
+    StorageService.destroy("Token")
+    StorageService.destroy("userInfo")
     setInterval(() => {
       if (this.step !== 2) return;
 
@@ -163,38 +165,24 @@ export default {
           });
         });
     },
-    login() {
+    async login() {
       this.loadingButton = true;
       EventBus.$emit("send-progress", true);
-      axios
-        .post(`${API_ENDPOINT}/login`, this.form)
-        .then(async (response) => {
-          EventBus.$emit("close-progress", true);
-          if (response) {
-            this.loadingButton = false;
-          }
+      let response = await this.$store.dispatch('login', this.form)
+      if (response) {
+        EventBus.$emit("close-progress", true);
+        this.loadingButton = false;
+      }
 
-          if (response.status === 200) {
-            this.handleAfterLogin(response)
-          }
-        })
-        .catch((error) => {
-          EventBus.$emit("close-progress", true);
-          this.loadingButton = false;
-          if (error.response && error.response.data) {
-            this.$message({
-              message: error.response.data.message,
-              type: "warning",
-              showClose: true,
-            });
-          } else {
-            this.$message({
-              message: "Có lỗi xảy ra",
-              type: "warning",
-              showClose: true,
-            });
-          }
+      if (response && response.status === 200) {
+        this.handleAfterLogin(response)
+      } else {
+        this.$message({
+          message: "Có lỗi xảy ra",
+          type: "warning",
+          showClose: true,
         });
+      }
     },
   },
 };

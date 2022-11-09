@@ -19,5 +19,11 @@ export const CREATE_CATEGORY = 'createCategory'
 export const UPDATE_CATEGORY = 'updateCategory'
 export const DELETE_CATEGORY = 'deleteCategory'
 
+export const FETCH_PROMOTIONS = 'fetchPromotions'
+export const FETCH_PROMOTION_BY_CODE = 'fetchPromotionByCode'
+export const CREATE_PROMOTION = 'createPromotion'
+export const UPDATE_PROMOTION = 'updatePromotion'
+export const DELETE_PROMOTION = 'deletePromotion'
+
 
 

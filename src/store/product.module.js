@@ -42,7 +42,7 @@ const actions = {
   },
   [CREATE_PRODUCT](context, payload) {
     return new Promise(async resolve => {
-      let response = await baseMixins.methods.put(`/rest/products`, payload)
+      let response = await baseMixins.methods.post(`/rest/products`, payload)
       resolve(response)
     })
   },
