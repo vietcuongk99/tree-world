@@ -8,7 +8,7 @@
               {{ userInfo.fullName }}
             </div>
             <div class="widget-subheading">
-              {{ userInfo.username }}@ghtk.co
+              {{ userInfo.username }}
             </div>
           </div>
           <div class="widget-content-left ml-3">

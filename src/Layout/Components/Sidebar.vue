@@ -56,6 +56,10 @@ export default {
               href: "/admin/product",
               title: "Danh sách sản phẩm",
             },
+            {
+              href: "/admin/promotion",
+              title: "Danh sách khuyến mại",
+            },
           ],
         },
         {

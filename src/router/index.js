@@ -114,6 +114,12 @@ const router = new Router({
       component: () => import("@/views/admin/ProductCategory"),
     },
     {
+      path: '/admin/promotion',
+      name: 'PromotionManagement',
+      meta: { title: 'Quản lý khuyến mại', layout: 'default' },
+      component: () => import("@/views/admin/Promotion"),
+    },
+    {
       path: '/error-not-allow',
       name: 'ErrorNotAllow',
       component: () => import("@/views/ErrorNotAllow"),
