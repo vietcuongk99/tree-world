@@ -25,5 +25,11 @@ export const CREATE_PROMOTION = 'createPromotion'
 export const UPDATE_PROMOTION = 'updatePromotion'
 export const DELETE_PROMOTION = 'deletePromotion'
 
+export const FETCH_POSTS = 'fetchPosts'
+export const FETCH_POST_BY_ID = 'fetchPostById'
+export const CREATE_POST = 'createPost'
+export const UPDATE_POST = 'updatePost'
+export const DELETE_POST = 'deletePost'
+
 
 

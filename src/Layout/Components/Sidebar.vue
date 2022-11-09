@@ -63,6 +63,16 @@ export default {
           ],
         },
         {
+          title: "Bài đăng",
+          icon: 'fas fa-pencil-alt',
+          child: [
+            {
+              href: "/admin/post",
+              title: "Danh sách bài đăng",
+            },
+          ],
+        },
+        {
           title: "Quản trị",
           icon: 'fa fa-user',
           child: [

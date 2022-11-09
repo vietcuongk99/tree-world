@@ -120,6 +120,24 @@ const router = new Router({
       component: () => import("@/views/admin/Promotion"),
     },
     {
+      path: '/admin/post',
+      name: 'PostManagement',
+      meta: { title: 'Quản lý bài đăng', layout: 'default' },
+      component: () => import("@/views/admin/Post"),
+    },
+    {
+      path: '/admin/post/create',
+      name: 'PostManagement',
+      meta: { title: 'Tạo bài đăng', layout: 'default' },
+      component: () => import("@/views/admin/PostCreate"),
+    },
+    {
+      path: '/admin/post/update/:id',
+      name: 'PostManagement',
+      meta: { title: 'Cập nhật bài đăng', layout: 'default' },
+      component: () => import("@/views/admin/PostCreate"),
+    },
+    {
       path: '/error-not-allow',
       name: 'ErrorNotAllow',
       component: () => import("@/views/ErrorNotAllow"),
