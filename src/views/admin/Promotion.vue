@@ -173,7 +173,7 @@
   
       <b-modal hide-footer id="delete-promotion" :title="'Xác nhận xoá khuyến mại'" :no-close-on-backdrop="true">
         <div class="pb-3">
-          Bạn có muốn xoá khuyến mại<span class="font-weight-bold" v-if="this.currentPromotion">{{ this.currentPromotion.promotionCode }}</span> không ?
+          Bạn có muốn xoá khuyến mại <span class="font-weight-bold" v-if="this.currentPromotion">{{ this.currentPromotion.promotionCode }}</span> không ?
         </div>
         <b-button class="mr-2 btn-light2 pull-right" @click="cancelDeletePromotion">
           Hủy
@@ -392,7 +392,7 @@
           });
           return
         }
-        let res = await this.$store.dispatch(DELETE_promotion, this.currentPromotion.promotionId)
+        let res = await this.$store.dispatch(DELETE_PROMOTION, this.currentPromotion.promotionId)
         if (res && res.status === 200) {
           this.$message.closeAll()
           this.$message({
