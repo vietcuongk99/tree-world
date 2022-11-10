@@ -127,15 +127,33 @@ const router = new Router({
     },
     {
       path: '/admin/post/create',
-      name: 'PostManagement',
+      name: 'PostCreate',
       meta: { title: 'Tạo bài đăng', layout: 'default' },
       component: () => import("@/views/admin/PostCreate"),
     },
     {
       path: '/admin/post/update/:id',
-      name: 'PostManagement',
+      name: 'PostUpdate',
       meta: { title: 'Cập nhật bài đăng', layout: 'default' },
       component: () => import("@/views/admin/PostCreate"),
+    },
+    {
+      path: '/admin/order',
+      name: 'OrderManagement',
+      meta: { title: 'Quản lý đơn hàng', layout: 'default' },
+      component: () => import("@/views/admin/Order"),
+    },
+    {
+      path: '/admin/order/create',
+      name: 'OrderCreate',
+      meta: { title: 'Tạo đơn hàng', layout: 'default' },
+      component: () => import("@/views/admin/OrderCreate"),
+    },
+    {
+      path: '/admin/order/update/:id',
+      name: 'OrderUpdate',
+      meta: { title: 'Cập nhật đơn hàng', layout: 'default' },
+      component: () => import("@/views/admin/OrderCreate"),
     },
     {
       path: '/error-not-allow',

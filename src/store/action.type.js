@@ -31,5 +31,17 @@ export const CREATE_POST = 'createPost'
 export const UPDATE_POST = 'updatePost'
 export const DELETE_POST = 'deletePost'
 
+export const FETCH_ORDERS = 'fetchOrders'
+export const CREATE_ORDER = 'createOrder'
+export const UPDATE_ORDER = 'updateOrder'
+export const DELETE_ORDER = 'deleteOrder'
+
+export const FETCH_ORDER_DETAIL = 'fetchOrderDetails'
+export const FETCH_ORDER_DETAIL_BY_ID = 'fetchOrderDetailById'
+export const FETCH_ORDER_DETAIL_BY_ORDER_ID = 'fetchOrderDetailByOrderId'
+export const CREATE_ORDER_DETAIL = 'createOrderDetail'
+export const UPDATE_ORDER_DETAIL = 'updateOrderDetail'
+export const DELETE_ORDER_DETAIL = 'deleteOrderDetail'
+
 
 

@@ -63,6 +63,16 @@ export default {
           ],
         },
         {
+          title: "Đơn hàng",
+          icon: 'fas fa-box-open',
+          child: [
+            {
+              href: "/admin/order",
+              title: "Danh sách đơn hàng",
+            },
+          ],
+        },
+        {
           title: "Bài đăng",
           icon: 'fas fa-pencil-alt',
           child: [
