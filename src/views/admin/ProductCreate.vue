@@ -282,7 +282,6 @@
 import PageTitle from "@/Layout/Components/PageTitle";
 import baseMixins from "@/components/mixins/base";
 import { required } from "vuelidate/lib/validators";
-import { formatTime } from "../../common/utils";
 import { formatPriceSearchV2 } from "../../common/common";
 import Vue from "vue";
 import Multiselect from "vue-multiselect";
@@ -290,7 +289,6 @@ import moment from "moment-timezone";
 import DatePicker from "vue2-datepicker";
 import "vue2-datepicker/index.css";
 import "vue2-datepicker/locale/vi";
-import router from "@/router";
 Vue.component("multiselect", Multiselect);
 import { FETCH_CATEGORY, FETCH_PRODUCT_BY_ID, CREATE_PRODUCT, UPDATE_PRODUCT } from "../../store/action.type";
 
@@ -476,7 +474,7 @@ export default {
 				},
 			};
 
-			if (!this.isUpdate) payload.productData.createdDate = formatTime(new Date());
+			if (!this.isUpdate) payload.productData.createdDate = moment(new Date()).format('YYYY-MM-DDTHH:mm:ss.SSSZ')
 
 			this.$store.dispatch(this.isUpdate ? UPDATE_PRODUCT : CREATE_PRODUCT, this.isUpdate ? payload : payload.productData).then((res) => {
 				if (!res) return

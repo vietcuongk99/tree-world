@@ -144,18 +144,6 @@ const router = new Router({
       component: () => import("@/views/admin/Order"),
     },
     {
-      path: '/admin/order/create',
-      name: 'OrderCreate',
-      meta: { title: 'Tạo đơn hàng', layout: 'default' },
-      component: () => import("@/views/admin/OrderCreate"),
-    },
-    {
-      path: '/admin/order/update/:id',
-      name: 'OrderUpdate',
-      meta: { title: 'Cập nhật đơn hàng', layout: 'default' },
-      component: () => import("@/views/admin/OrderCreate"),
-    },
-    {
       path: '/error-not-allow',
       name: 'ErrorNotAllow',
       component: () => import("@/views/ErrorNotAllow"),
