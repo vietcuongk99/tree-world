@@ -7,22 +7,6 @@
         <b-row>
           <b-col md="4">
             <b-form-group>
-              <label>Tổng giá đơn hàng:</label>
-              <span>{{ getFormatPrice(currentData.totalPrice) }}đ</span>
-              <!-- <b-form-input id="input-price" @keypress="validateKeyCode" @keyup="formatTotalPrice" type="text"
-                v-model.trim="$v.currentData.totalPrice.$model" placeholder="Nhập giá tiền" :class="{
-                  'is-invalid': validationStatus($v.currentData.totalPrice),
-                }" :disabled="disabledUpdateOrder"></b-form-input>
-              <div v-if="!$v.currentData.totalPrice.required" class="invalid-feedback">
-                Giá đơn hàng không được để trống.
-              </div> -->
-            </b-form-group>
-          </b-col>
-        </b-row>
-
-        <b-row>
-          <b-col md="4">
-            <b-form-group>
               <label>Mã khuyến mại:</label>
               <multiselect v-model="currentData.promotion" track-by="text" label="text" :show-labels="false"
                 :disabled="disabledUpdateOrder" placeholder="Chọn" :options="promotionOptions" :searchable="true">
@@ -36,8 +20,8 @@
             <b-form-group>
               <label>Trạng thái <span class="text-danger">*</span>:</label>
               <multiselect v-model="$v.currentData.orderStatus.$model" track-by="text" label="text" :show-labels="false"
-                :disabled="disabledUpdateOrder" placeholder="Chọn" :options="orderStatusOptions" :searchable="true"
-                :class="{
+                :disabled="disabledUpdateOrder || !isUpdate" placeholder="Chọn" :options="orderStatusOptions"
+                :searchable="true" :class="{
                   'is-invalid-option': validationStatus(
                     $v.currentData.orderStatus
                   ),
@@ -109,56 +93,63 @@
           </b-form-group>
         </div>
       </div>
-      <!-- <div class="w-100" v-if="currentDetailData && currentDetailData.order_detail_id">
-        <span class="font-weight-bold">Chi tiết đơn hàng</span>
-        <div v-if="currentDetailData.product">
+      <div class="w-100 mb-4" v-if="currentDetailData">
+        <div class="d-flex align-items-center mb-2">
+          <span class="font-weight-bold">Danh sách sản phẩm</span>
+          <b-button class="ml-3" variant="outline-success" @click.prevent="addNewProductForDetail"
+            :disabled="disabledUpdateOrder">
+            <i class="fas fa-plus"></i>
+            Thêm
+          </b-button>
+        </div>
+        <div v-for="(item, index) in currentDetailData" :key="index">
           <b-row>
             <b-col md="4">
-              <img :src="currentDetailData.product.mainImg" alt="ảnh sản phẩm">
-            </b-col>
-            <b-col md="4">
-              <span>{{ currentDetailData.product.productName }}</span>
+              <b-form-group>
+                <label>Sản phẩm:</label>
+                <multiselect v-model="item.product" track-by="text" label="text" :show-labels="false"
+                  :disabled="disabledUpdateOrder" placeholder="Chọn" :options="productOptions" :searchable="true">
+                  <template slot="singleLabel" slot-scope="{ option }">
+                    {{ option.text }}
+                  </template>
+                </multiselect>
+              </b-form-group>
             </b-col>
             <b-col md="2">
-              <span>{{ getFormatPrice(currentDetailData.productPrice * currentDetailData.quantity) + 'đ' }}</span>
+              <b-form-group>
+                <label>Số lượng:</label>
+                <b-form-input id="input-product-quantity" v-model="item.quantity" type="number"
+                  placeholder="Nhập giá tiền" :disabled="disabledUpdateOrder" @input="calculateProductPrice">
+                </b-form-input>
+              </b-form-group>
+            </b-col>
+            <b-col md="2">
+              <b-form-group>
+                <label>Tổng giá:</label>
+                <div v-if="item.product && item.quantity">{{ getFormatPrice(item.product.sellPrice * item.quantity) }}đ</div>
+              </b-form-group>
+            </b-col>
+            <b-col md="2">
+              <b-button class="mt-4" variant="danger"
+                @click.prevent="openModalDeleteOrderDetail(item.order_detail_id, index)"
+                :disabled="disabledUpdateOrder">
+                <i class="fas fa-trash"></i>
+                Xoá
+              </b-button>
             </b-col>
           </b-row>
         </div>
-      </div> -->
-      <div class="w-100" v-if="currentDetailData">
-        <div class="mb-2 font-weight-bold">Thông tin sản phẩm</div>
+      </div>
+      <div>
         <b-row>
           <b-col md="4">
             <b-form-group>
-              <label>Sản phẩm:</label>
-              <multiselect
-                v-model="currentDetailData.product" track-by="text" label="text" :show-labels="false"
-                :disabled="disabledUpdateOrder" placeholder="Chọn" :options="productOptions" :searchable="true"
-              >
-                <template slot="singleLabel" slot-scope="{ option }">
-                  {{ option.text }}
-                </template>
-              </multiselect>
+              <label class="font-weight-bold mr-2">Tổng giá sản phẩm:</label>
+              <span>{{ getTotalProductPrice() }}đ</span>
             </b-form-group>
-          </b-col>
-          <b-col md="2">
             <b-form-group>
-              <label>Số lượng:</label>
-              <b-form-input
-                id="input-product-quantity"
-                v-model="currentDetailData.quantity"
-                type="number"
-                placeholder="Nhập giá tiền"
-                :disabled="disabledUpdateOrder"
-                @input="calculateProductPrice"
-              >
-              </b-form-input>
-            </b-form-group>
-          </b-col>
-          <b-col md="4">
-            <b-form-group>
-              <label>Tổng giá:</label>
-              <div>{{getFormatPrice(currentDetailData.productPrice)}}đ</div>
+              <label class="font-weight-bold mr-2">Tổng giá đơn hàng:</label>
+              <span>{{ getFormatPrice(currentData.totalPrice) }}đ</span>
             </b-form-group>
           </b-col>
         </b-row>
@@ -195,8 +186,7 @@ import { mapGetters } from "vuex";
 import "vue2-datepicker/index.css";
 import "vue2-datepicker/locale/vi";
 Vue.component("multiselect", Multiselect);
-import { CREATE_ORDER, UPDATE_ORDER, FETCH_PROMOTIONS, FETCH_PRODUCTS_AVAILABLE } from "@/store/action.type";
-import { CREATE_ORDER_DETAIL, UPDATE_ORDER_DETAIL } from '../../../store/action.type';
+import { CREATE_ORDER, UPDATE_ORDER, FETCH_PROMOTIONS, FETCH_PRODUCTS_AVAILABLE, CREATE_ORDER_DETAIL, UPDATE_ORDER_DETAIL, DELETE_ORDER_DETAIL } from "@/store/action.type";
 
 const initOrder = {
   totalPrice: null,
@@ -211,7 +201,7 @@ const initOrder = {
   phoneNumber: 0,
   orderId: null,
   promotion: null,
-  orderStatus: null,
+  orderStatus: { value: "1", text: 'Chờ xác nhận' },
   user: null
 };
 
@@ -230,7 +220,7 @@ export default {
   props: {
     currentTitleModal: String,
     order: Object,
-    orderDetail: Object,
+    orderDetail: Array,
     isUpdate: Boolean,
   },
   data() {
@@ -249,7 +239,7 @@ export default {
       promotionOptions: [],
       productOptions: [],
       currentData: Object.assign({}, initOrder),
-      currentDetailData: Object.assign({}, initOrderDetail),
+      currentDetailData: [Object.assign({}, initOrderDetail)],
     };
   },
   mixins: [baseMixins],
@@ -277,8 +267,8 @@ export default {
   },
   watch: {
     isUpdate(newValue, oldValue) {
-      if (newValue) this.setCurrentUpdateData()
-      if (!newValue) this.currentData = Object.assign({}, initOrder)
+      console.log(newValue)
+      if (newValue) this.setCurrentUpdateDetailData()
     }
   },
   mounted() {
@@ -300,13 +290,13 @@ export default {
   },
   computed: {
     disabledUpdateOrder() {
-      return this.currentData && this.isUpdate && !(this.currentData.orderStatus && this.currentData.orderStatus.value === 1)
+      return (this.currentData && this.isUpdate && !(this.currentData.orderStatus && this.currentData.orderStatus.value === 1))
     },
   },
   methods: {
     calculateProductPrice() {
-      this.currentDetailData.productPrice = this.currentDetailData.quantity && this.currentDetailData.product
-        ? this.currentDetailData.quantity * this.currentDetailData.product.sellPrice
+      this.currentDetailData.productPrice = this.currentDetailData && this.currentDetailData.length > 0
+        ? this.currentDetailData.map(item => item.quantity * item.sellPrice).reduce((prev, current) => prev + current, 0)
         : 0
 
       this.currentData.totalPrice = this.currentDetailData.productPrice
@@ -323,11 +313,12 @@ export default {
     },
     setCurrentUpdateDetailData() {
       if (!this.orderDetail) return
-      let { product } = { ...this.orderDetail }
-      this.currentDetailData = {
-        ...this.orderDetail,
-        product: product ? { text: product.productName, value: product.productId, img: product.mainImg, sellPrice: product.sellPrice, } : null,
-      }
+      this.currentDetailData = this.orderDetail.map(item => {
+        return {
+          ...item,
+          product: item.product ? { text: product.productName, value: product.productId, img: product.mainImg, sellPrice: product.sellPrice, } : null,
+        }
+      })
     },
     validateKeyCode: function (e) {
       if ((e.key < 48 || e.key > 57 || e.charCode === 13) && e.charCode !== 45 && e.charCode !== 32) {
@@ -390,12 +381,18 @@ export default {
         },
       };
 
+      let successMsg = `${this.isUpdate ? 'Cập nhật' : 'Tạo'} đơn hàng thành công.`
+      let errorMsg = `${this.isUpdate ? 'Cập nhật' : 'Tạo'} đơn hàng không thành công.`
+
       let payloadForDetail = {
-        orderId,
-        productId: this.currentDetailData.product ? this.currentDetailData.product.value : null,
-        productName: this.currentDetailData.product ? this.currentDetailData.product.text : null,
-        quantity: this.currentDetailData.quantity,
-        productPrice: this.currentDetailData.productPrice,
+        orderDetailId: this.currentDetailData.order_detail_id,
+        orderDetailData: {
+          orderId: orderId + '',
+          productId: this.currentDetailData.product ? this.currentDetailData.product.value + '' : null,
+          productName: this.currentDetailData.product ? this.currentDetailData.product.text : null,
+          quantity: this.currentDetailData.quantity,
+          productPrice: this.currentDetailData.productPrice + '',
+        },
       }
 
       if (this.isUpdate) {
@@ -403,7 +400,7 @@ export default {
           this.$store.dispatch(UPDATE_ORDER, payload),
           this.$store.dispatch(UPDATE_ORDER_DETAIL, payloadForDetail)
         ]).then(res => {
-          if(res[0].status === 200 && res[1].status === 200) {
+          if (res[0].status === 200 && res[1].status === 200) {
             this.$message({
               message: successMsg,
               type: "success",
@@ -416,14 +413,14 @@ export default {
         })
       }
 
-      if(!this.isUpdate) {
+      if (!this.isUpdate) {
         let res = await this.$store.dispatch(CREATE_ORDER, payload.orderData)
 
         if (res.status === 200 && res.data && res.data.data) {
-          payloadForDetail.orderId = res.data.data.orderId
-          let resForDetail = await this.$store.dispatch(CREATE_ORDER_DETAIL, payloadForDetail)
+          payloadForDetail.orderDetailData.orderId = res.data.data.orderId
+          let resForDetail = await this.$store.dispatch(CREATE_ORDER_DETAIL, payloadForDetail.orderDetailData)
 
-          if(resForDetail.status === 200) {
+          if (resForDetail.status === 200) {
             this.$message({
               message: successMsg,
               type: "success",
@@ -435,33 +432,6 @@ export default {
           }
         }
       }
-
-
-      let resForOrder = await this.$store.dispatch(this.isUpdate ? UPDATE_ORDER : CREATE_ORDER, this.isUpdate ? payload : payload.orderData)
-
-      this.$store.dispatch(this.isUpdate ? UPDATE_ORDER : CREATE_ORDER, this.isUpdate ? payload : payload.orderData).then((res) => {
-        if (!res) return
-
-        let successMsg = `${this.isUpdate ? 'Cập nhật' : 'Tạo'} đơn hàng thành công.`
-        let errorMsg = `${this.isUpdate ? 'Cập nhật' : 'Tạo'} đơn hàng không thành công.`
-        if (res.status === 200) {
-          this.$message({
-            message: successMsg,
-            type: "success",
-            showClose: true,
-          });
-          setTimeout(() => {
-            this.cancelCreateOrder(true)
-          }, 500)
-        }
-        if (res.status !== 200) {
-          this.$message({
-            message: errorMsg,
-            type: "error",
-            showClose: true,
-          });
-        }
-      });
     },
     handleSubmit() {
       this.$v.$reset();
@@ -479,7 +449,7 @@ export default {
       }
       if (!this.isUpdate) {
         this.currentData = Object.assign({}, initOrder)
-        this.currentDetailData = Object.assign({}, initOrderDetail)
+        this.currentDetailData = [Object.assign({}, initOrderDetail)]
       }
 
       this.$nextTick(() => {
@@ -494,7 +464,19 @@ export default {
       this.$root.$emit("bv::hide::modal", "modal-create-order");
       this.$emit('cancelCreateOrder', isFetchOrders)
     },
-    handleDeleteDetailData
+    openModalDeleteOrderDetail(item, indexVal) {
+      if (item && item.order_detail_id) {
+        this.$emit('openModalDeleteOrderDetail', item.order_detail_id)
+        // this.$root.$emit("bv::show::modal", "delete-order-detail");
+      }
+      else {
+        this.currentDetailData = this.currentDetailData.filter((item, index) => index !== indexVal)
+      }
+    },
+    addNewProductForDetail() {
+      let newProduct = Object.assign({}, { ...initOrderDetail })
+      this.currentDetailData.push(newProduct)
+    }
   },
 };
 </script>

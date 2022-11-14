@@ -82,13 +82,13 @@ const actions = {
   },
   [UPDATE_ORDER_DETAIL](context, payload) {
     return new Promise(async resolve => {
-      let response = await baseMixins.methods.put(`/rest/orderDetails/${payload.orderId}`, payload.orderDetailData)
+      let response = await baseMixins.methods.put(`/rest/orderDetails/${payload.orderDetailId}`, payload.orderDetailData)
       resolve(response)
     })
   },
-  [DELETE_ORDER_DETAIL](context, orderId) {
+  [DELETE_ORDER_DETAIL](context, orderDetailId) {
     return new Promise(async resolve => {
-      let response = await baseMixins.methods.delete(`/rest/orderDetails/${orderId}`)
+      let response = await baseMixins.methods.delete(`/rest/orderDetails/${orderDetailId}`)
       resolve(response)
     })
   },

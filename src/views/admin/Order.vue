@@ -110,7 +110,20 @@
       :currentTitleModal="currentTitleModalCreateOrder"
       :isUpdate="isUpdateOrder"
       @cancelCreateOrder="cancelCreateOrder"
+      @openModalDeleteOrderDetail="openModalDeleteOrderDetail"
     />
+    <b-modal hide-footer id="delete-order-detail" :title="'Xác nhận xoá sản phẩm khỏi đơn hàng'" :no-close-on-backdrop="true">
+      <div class="pb-3">
+        Bạn có muốn xoá sản phẩm <span class="font-weight-bold" v-if="currentOrderDetail && currentOrderDetail.product">
+        {{ currentOrderDetail.product.productName }}</span> khỏi đơn hàng không ?
+      </div>
+      <b-button class="mr-2 btn-light2 pull-right" @click="cancelDeleteOrderDetail()">
+        Hủy
+      </b-button>
+      <b-button variant="primary pull-right" class="mr-2" type="submit" @click="handleDeleteOrderDetail()">
+        Đồng ý
+      </b-button>
+    </b-modal>
   </div>
 </template>
       
@@ -137,6 +150,32 @@ const ACTION_FOR_ORDER = {
   REJECT: 'reject',
 }
 
+const initOrder = {
+  totalPrice: null,
+  note: null,
+  orderStatusId: null,
+  date: null,
+  promotionId: 0,
+  address: null,
+  city: null,
+  district: null,
+  wards: null,
+  phoneNumber: 0,
+  orderId: null,
+  promotion: null,
+  orderStatus: null,
+  user: null
+};
+
+const initOrderDetail = {
+  order_detail_id: null,
+  order: null,
+  product: null,
+  productName: null,
+  productPrice: null,
+  quantity: null
+}
+
 export default {
   name: "OrderManagement",
   data() {
@@ -150,7 +189,8 @@ export default {
       userInfo: localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null,
       isUpdateOrder: false,
       currentOrder: null,
-      currentOrderDetail: null,
+      currentOrderDetail: [],
+      currentOrderDetailId: null,
       currentActionForOrder: null,
       currentTitleModalAction: null,
       currentContentModalAction: null,
@@ -204,6 +244,10 @@ export default {
     },
   },
   methods: {
+    openModalDeleteOrderDetail(orderDetailId) {
+      this.currentOrderDetailId = orderDetailId
+      this.$root.$emit("bv::show::modal", "delete-order-detail");
+    },
     getUserPlace(order) {
       if (!order) return ''
 
@@ -246,7 +290,7 @@ export default {
     async fetchOrderDetailById(orderId, action) {
       let response = await this.$store.dispatch(FETCH_ORDER_DETAIL_BY_ORDER_ID, orderId);
       if (response && response.data && response.data.success) {
-        this.currentOrderDetail = {...response.data.data}
+        this.currentOrderDetail = [...response.data.data]
         action()
       } else {
         this.$message({
@@ -273,10 +317,13 @@ export default {
     },
     navigateToCreateOrder() {
       this.currentTitleModalCreateOrder = 'Tạo đơn hàng'
+      this.currentOrderDetail = [Object.assign({}, {...initOrderDetail})]
+      this.currentOrder = Object.assign({}, {...initOrder})
       this.$root.$emit("bv::show::modal", "modal-create-order");
     },
     cancelCreateOrder(isFetchOrders) {
-      this.currentOrder = null
+      this.currentOrderDetail = [Object.assign({}, {...initOrderDetail})]
+      this.currentOrder = Object.assign({}, {...initOrder})
       this.currentTitleModalCreateOrder = null
       this.isUpdateOrder = false
 
@@ -380,6 +427,26 @@ export default {
         this.cancelActionForOrder()
       }
     },
+    cancelDeleteOrderDetail() {
+      this.$root.$emit("bv::hide::modal", "delete-order-detail");
+    },
+    async handleDeleteOrderDetail() {
+      if (this.currentOrderDetailId) {
+        let res = await this.$store.dispatch(DELETE_ORDER_DETAIL, this.currentOrderDetailId)
+
+        if (res.status === 200) {
+          this.cancelDeleteOrderDetail()
+          this.currentOrderDetail = this.currentOrderDetail.filter(item => item.order_detail_id != this.currentOrderDetailId)
+          this.currentOrderDetailId = null
+          this.$message.closeAll()
+          this.$message({
+            message: "Xoá sản phẩm khỏi đơn hàng thành công.",
+            type: "success",
+            showClose: true,
+          });
+        }
+      }
+    }
   },
 }
 </script>
