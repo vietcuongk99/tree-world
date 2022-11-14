@@ -106,6 +106,7 @@
     </b-modal>
     <ModalCreateOrder
       :order="currentOrder"
+      :orderDetail="currentOrderDetail"
       :currentTitleModal="currentTitleModalCreateOrder"
       :isUpdate="isUpdateOrder"
       @cancelCreateOrder="cancelCreateOrder"
@@ -120,7 +121,7 @@ import { required } from "vuelidate/lib/validators";
 import { mapGetters } from "vuex";
 import router from '@/router';
 import { formatDateTime } from "../../common/utils"
-import { FETCH_ORDERS, UPDATE_ORDER, DELETE_ORDER } from "@/store/action.type";
+import { FETCH_ORDERS, UPDATE_ORDER, DELETE_ORDER, FETCH_ORDER_DETAIL_BY_ORDER_ID, CREATE_ORDER_DETAIL, UPDATE_ORDER_DETAIL, DELETE_ORDER_DETAIL } from "@/store/action.type";
 import { formatPriceSearchV2 } from "../../common/common";
 import ModalCreateOrder from "@/Layout/Components/admin/ModalCreateOrder.vue";
 
@@ -149,6 +150,7 @@ export default {
       userInfo: localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null,
       isUpdateOrder: false,
       currentOrder: null,
+      currentOrderDetail: null,
       currentActionForOrder: null,
       currentTitleModalAction: null,
       currentContentModalAction: null,
@@ -241,12 +243,33 @@ export default {
 
       if (response && response.data) this.$store.commit("setOrders", response.data.data);
     },
+    async fetchOrderDetailById(orderId, action) {
+      let response = await this.$store.dispatch(FETCH_ORDER_DETAIL_BY_ORDER_ID, orderId);
+      if (response && response.data && response.data.success) {
+        this.currentOrderDetail = {...response.data.data}
+        action()
+      } else {
+        this.$message({
+          message: "Lấy chi tiết đơn hàng không thành công.",
+          type: "error",
+          showClose: true,
+        });
+      }
+    },
+    navigateToOrderDetail(orderId) {
+      this.$router.push({
+        path: '/admin/order-detail/order/',
+        query: { orderId: orderId }
+      })
+    },
     navigateToUpdateOrder(order) {
       if (!order.orderId) return
       this.isUpdateOrder = true
       this.currentTitleModalCreateOrder = 'Cập nhật đơn hàng'
       this.currentOrder = {...order}
-      this.$root.$emit("bv::show::modal", "modal-create-order");
+      this.fetchOrderDetailById(order.orderId, () => {
+        this.$root.$emit("bv::show::modal", "modal-create-order");
+      })
     },
     navigateToCreateOrder() {
       this.currentTitleModalCreateOrder = 'Tạo đơn hàng'

@@ -4,17 +4,24 @@ import {
 } from "./action.type";
 import baseMixins from '../components/mixins/base'
 const state = {
-  orders: []
+  orders: [],
+  orderDetails: [],
 }
 const getters = {
   getOrders(state) {
     return state.orders;
   },
+  getOrderDetails(state) {
+    return state.orderDetails;
+  }
 }
 
 const mutations = {
   setOrders(state, payload) {
     state.orders = payload;
+  },
+  setOrderDetails(state, payload) {
+    state.orderDetails = payload;
   },
 }
 
@@ -43,6 +50,45 @@ const actions = {
   [DELETE_ORDER](context, orderId) {
     return new Promise(async resolve => {
       let response = await baseMixins.methods.delete(`/rest/orders/${orderId}`)
+      resolve(response)
+    })
+  },
+  [FETCH_ORDER_DETAIL](context, payload) {
+    return new Promise(async resolve => {
+      let response = await baseMixins.methods.getWithBigInt('/rest/orderDetails')
+      if (response && response.status === 200 && response.data) {
+        context.commit("setOrderDetails", response.data.data)
+      }
+      resolve(response)
+    })
+  },
+  [FETCH_ORDER_DETAIL_BY_ID](context, orderId) {
+    return new Promise(async resolve => {
+      let response = await baseMixins.methods.get(`/rest/orderDetails/${orderId}`)
+      resolve(response)
+    })
+  },
+  [FETCH_ORDER_DETAIL_BY_ORDER_ID](context, orderId) {
+    return new Promise(async resolve => {
+      let response = await baseMixins.methods.get(`/rest/orderDetails/order/${orderId}`)
+      resolve(response)
+    })
+  },
+  [CREATE_ORDER_DETAIL](context, payload) {
+    return new Promise(async resolve => {
+      let response = await baseMixins.methods.post('/rest/orderDetails', payload)
+      resolve(response)
+    })
+  },
+  [UPDATE_ORDER_DETAIL](context, payload) {
+    return new Promise(async resolve => {
+      let response = await baseMixins.methods.put(`/rest/orderDetails/${payload.orderId}`, payload.orderDetailData)
+      resolve(response)
+    })
+  },
+  [DELETE_ORDER_DETAIL](context, orderId) {
+    return new Promise(async resolve => {
+      let response = await baseMixins.methods.delete(`/rest/orderDetails/${orderId}`)
       resolve(response)
     })
   },
