@@ -427,23 +427,27 @@
                 </div>
                 <div class="tab-pane" id="tabs-3" role="tabpanel">
                   <div class="product__details__tab__desc">
-                    <h6>Products Infomation</h6>
-                    <p>
-                      Vestibulum ac diam sit amet quam vehicula elementum sed
-                      sit amet dui. Pellentesque in ipsum id orci porta dapibus.
-                      Proin eget tortor risus. Vivamus suscipit tortor eget
-                      felis porttitor volutpat. Vestibulum ac diam sit amet quam
-                      vehicula elementum sed sit amet dui. Donec rutrum congue
-                      leo eget malesuada. Vivamus suscipit tortor eget felis
-                      porttitor volutpat. Curabitur arcu erat, accumsan id
-                      imperdiet et, porttitor at sem. Praesent sapien massa,
-                      convallis a pellentesque nec, egestas non nisi. Vestibulum
-                      ac diam sit amet quam vehicula elementum sed sit amet dui.
-                      Vestibulum ante ipsum primis in faucibus orci luctus et
-                      ultrices posuere cubilia Curae; Donec velit neque, auctor
-                      sit amet aliquam vel, ullamcorper sit amet ligula. Proin
-                      eget tortor risus.
-                    </p>
+                    <h6>Đánh giá của khách hàng</h6>
+                    <div>
+                      <a-comment>
+                      <template #avatar>
+                        <a-avatar
+                          src="../assets/static/avatar.png"
+                          alt="avatar"
+                        />
+                      </template>
+                      <template #content>
+                        <a-form-item>
+                          <a-textarea :rows="4" v-model="newReview" />
+                        </a-form-item>
+                        <a-form-item>
+                          <a-button type="primary" @click="createReview">
+                            Đánh giá
+                          </a-button>
+                        </a-form-item>
+                      </template>
+                    </a-comment>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -649,12 +653,89 @@
 
 <script>
 import { handleJQuery } from "@/common/utils";
+import { FETCH_REVIEWS, UPDATE_REVIEW, CREATE_REVIEW } from "@/store/action.type";
 
 export default {
   name: 'ShopDetail',
+  data() {
+    return {
+      currentProductId: null,
+      currentUserId: null,
+      newReview: null,
+      productReviews: [],
+    }
+  },
   mounted() {
     handleJQuery()
+    this.currentProductId = this.$route.query.id
+    this.fetchReviews()
   },
+  computed: {
+    ...mapGetters(["getReviews"]),
+  },
+  methods: {
+    async fetchReviews() {
+      let res = await this.$store.dispatch(FETCH_REVIEWS)
+
+      if (res.status === 200 && res.data.data) {
+        this.getReviewsByProduct()
+      }
+    },
+    getReviewsByProduct(response) {
+      this.productReviews = response.filter(item => item.productId && item.productId.productId === this.currentProductId)
+
+      if (this.productReviews && this.productReviews.length > 0) {
+        this.productReviews = this.productReviews.map(review => {
+          return {
+            ...review,
+            toggleUpdate: false
+          }
+        })
+      }
+    },
+    async createReview(review) {
+      let payload = {
+        userId: review.userId ? review.userId.userId : null,
+        productId: this.currentProductId,
+        reviewDetail: newReview,
+        date: moment(new Date()).format('YYYY-MM-DD'),
+      }
+      let res = await this.$store.dispatch(CREATE_REVIEW, payload)
+
+      if (res.status === 200) {
+        this.newReview = null
+        this.$message.closeAll()
+        this.$message({
+          message: 'Thêm đánh giá thành công',
+					type: "success",
+					showClose: true,
+        })
+        this.fetchReviews()
+      }
+    },
+    async updateReview(review) {
+      let payload = {
+        reviewId: review.review_id,
+        reviewData: {
+          userId: review.userId ? review.userId.userId : null,
+          productId: review.productId ? review.productId.productId : null,
+          reviewDetail: review.reviewDetail,
+          date: moment(new Date(review.date)).format('YYYY-MM-DD'),
+        }
+      }
+      let res = await this.$store.dispatch(UPDATE_REVIEW, payload)
+
+      if (res.status === 200) {
+        this.$message.closeAll()
+        this.$message({
+          message: 'Cập nhật đánh giá thành công',
+					type: "success",
+					showClose: true,
+        })
+        this.fetchReviews()
+      }
+    }
+  }
 }
 </script>
 

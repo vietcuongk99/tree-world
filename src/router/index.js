@@ -43,6 +43,12 @@ const router = new Router({
       component: () => import("@/views/ShopDetail"),
     },
     {
+      path: '/shop-detail/:id',
+      name: 'ShopDetail',
+      meta: { title: 'Shop Detail', layout: 'userpages' },
+      component: () => import("@/views/ShopDetail"),
+    },
+    {
       path: '/shopping-cart',
       name: 'ShoppingCart',
       meta: { title: 'Shopping Cart', layout: 'userpages' },

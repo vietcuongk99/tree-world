@@ -20,7 +20,7 @@
             <b-form-group>
               <label>Trạng thái <span class="text-danger">*</span>:</label>
               <multiselect v-model="$v.currentData.orderStatus.$model" track-by="text" label="text" :show-labels="false"
-                :disabled="disabledUpdateOrder || !isUpdate" placeholder="Chọn" :options="orderStatusOptions"
+                :disabled="disabledUpdateOrder" placeholder="Chọn" :options="orderStatusOptions"
                 :searchable="true" :class="{
                   'is-invalid-option': validationStatus(
                     $v.currentData.orderStatus
@@ -102,42 +102,47 @@
             Thêm
           </b-button>
         </div>
-        <div v-for="(item, index) in currentDetailData" :key="index">
-          <b-row>
-            <b-col md="4">
-              <b-form-group>
-                <label>Sản phẩm:</label>
-                <multiselect v-model="item.product" track-by="text" label="text" :show-labels="false"
-                  :disabled="disabledUpdateOrder" placeholder="Chọn" :options="productOptions" :searchable="true">
-                  <template slot="singleLabel" slot-scope="{ option }">
-                    {{ option.text }}
-                  </template>
-                </multiselect>
-              </b-form-group>
-            </b-col>
-            <b-col md="2">
-              <b-form-group>
-                <label>Số lượng:</label>
-                <b-form-input id="input-product-quantity" v-model="item.quantity" type="number"
-                  placeholder="Nhập giá tiền" :disabled="disabledUpdateOrder" @input="calculateProductPrice">
-                </b-form-input>
-              </b-form-group>
-            </b-col>
-            <b-col md="2">
-              <b-form-group>
-                <label>Tổng giá:</label>
-                <div v-if="item.product && item.quantity">{{ getFormatPrice(item.product.sellPrice * item.quantity) }}đ</div>
-              </b-form-group>
-            </b-col>
-            <b-col md="2">
-              <b-button class="mt-4" variant="danger"
-                @click.prevent="openModalDeleteOrderDetail(item.order_detail_id, index)"
-                :disabled="disabledUpdateOrder">
-                <i class="fas fa-trash"></i>
-                Xoá
-              </b-button>
-            </b-col>
-          </b-row>
+        <div class="text-center my-3" v-if="loadingOrderDetail && isUpdate">
+          <b-spinner variant="success" label="Spinning"></b-spinner>
+        </div>
+        <div v-else>
+          <div v-for="(item, index) in currentDetailData" :key="index">
+            <b-row>
+              <b-col md="4">
+                <b-form-group>
+                  <label>Sản phẩm:</label>
+                  <multiselect v-model="item.product" track-by="text" label="text" :show-labels="false"
+                    :disabled="disabledUpdateOrder" placeholder="Chọn" :options="productOptions" :searchable="true">
+                    <template slot="singleLabel" slot-scope="{ option }">
+                      {{ option.text }}
+                    </template>
+                  </multiselect>
+                </b-form-group>
+              </b-col>
+              <b-col md="2">
+                <b-form-group>
+                  <label>Số lượng:</label>
+                  <b-form-input id="input-product-quantity" v-model="item.quantity" type="number"
+                    placeholder="Nhập số lượng" :disabled="disabledUpdateOrder" @input="calculateProductPrice">
+                  </b-form-input>
+                </b-form-group>
+              </b-col>
+              <b-col md="2">
+                <b-form-group>
+                  <label>Tổng giá:</label>
+                  <div>{{item.product && item.quantity ? getFormatPrice(item.product.sellPrice * item.quantity) : 0 }}đ</div>
+                </b-form-group>
+              </b-col>
+              <b-col md="2">
+                <b-button class="mt-4" variant="danger"
+                  @click.prevent="openModalDeleteOrderDetail(item, index)"
+                  :disabled="disabledUpdateOrder">
+                  <i class="fas fa-trash"></i>
+                  Xoá
+                </b-button>
+              </b-col>
+            </b-row>
+          </div>
         </div>
       </div>
       <div>
@@ -145,30 +150,43 @@
           <b-col md="4">
             <b-form-group>
               <label class="font-weight-bold mr-2">Tổng giá sản phẩm:</label>
-              <span>{{ getTotalProductPrice() }}đ</span>
+              <span>{{ getFormatPrice(getTotalProductPrice()) }}đ</span>
             </b-form-group>
-            <b-form-group>
+            <!-- <b-form-group>
               <label class="font-weight-bold mr-2">Tổng giá đơn hàng:</label>
               <span>{{ getFormatPrice(currentData.totalPrice) }}đ</span>
-            </b-form-group>
+            </b-form-group> -->
           </b-col>
         </b-row>
       </div>
       <div class="text-right">
         <b-button variant="outline-danger" @click="cancelCreateOrder(false)">
           <i class="fas fa-times"></i>
-          Hủy
+          Huỷ
         </b-button>
-        <b-button variant="outline-secondary" @click.prevent="handleReset">
+        <!-- <b-button variant="outline-secondary" @click.prevent="handleReset">
           <i class="fas fa-undo"></i>
           Hoàn tác
-        </b-button>
+        </b-button> -->
         <b-button variant="primary" @click.prevent="handleSubmit" :disabled="disabledUpdateOrder">
           <i class="fas fa-check"></i>
           Đồng ý
         </b-button>
       </div>
     </b-card>
+
+    <b-modal hide-footer id="delete-order-detail" :title="'Xác nhận xoá sản phẩm khỏi đơn hàng'" :no-close-on-backdrop="true">
+      <div class="pb-3">
+        Bạn có muốn xoá sản phẩm <span class="font-weight-bold" v-if="currentSelectDetail">
+        {{ currentSelectDetail.productName }}</span> khỏi đơn hàng không ?
+      </div>
+      <b-button class="mr-2 btn-light2 pull-right" @click="cancelDeleteOrderDetail()">
+        Hủy
+      </b-button>
+      <b-button variant="primary pull-right" class="mr-2" type="submit" @click="handleDeleteOrderDetail()">
+        Đồng ý
+      </b-button>
+    </b-modal>
 
   </b-modal>
 </template>
@@ -186,11 +204,20 @@ import { mapGetters } from "vuex";
 import "vue2-datepicker/index.css";
 import "vue2-datepicker/locale/vi";
 Vue.component("multiselect", Multiselect);
-import { CREATE_ORDER, UPDATE_ORDER, FETCH_PROMOTIONS, FETCH_PRODUCTS_AVAILABLE, CREATE_ORDER_DETAIL, UPDATE_ORDER_DETAIL, DELETE_ORDER_DETAIL } from "@/store/action.type";
+import {
+  CREATE_ORDER,
+  UPDATE_ORDER,
+  FETCH_PROMOTIONS,
+  FETCH_PRODUCTS_AVAILABLE,
+  CREATE_ORDER_DETAIL,
+  UPDATE_ORDER_DETAIL,
+  DELETE_ORDER_DETAIL,
+  FETCH_ORDER_DETAIL_BY_ORDER_ID
+} from "@/store/action.type";
 
 const initOrder = {
-  totalPrice: null,
   note: null,
+  totalPrice: 0,
   orderStatusId: null,
   date: null,
   promotionId: 0,
@@ -201,7 +228,7 @@ const initOrder = {
   phoneNumber: 0,
   orderId: null,
   promotion: null,
-  orderStatus: { value: "1", text: 'Chờ xác nhận' },
+  orderStatus: { id: 1, statusName: "Chờ xác nhận" },
   user: null
 };
 
@@ -210,7 +237,7 @@ const initOrderDetail = {
   order: null,
   product: null,
   productName: null,
-  productPrice: null,
+  productPrice: 0,
   quantity: null
 }
 
@@ -219,7 +246,10 @@ export default {
   components: { PageTitle, DatePicker },
   props: {
     currentTitleModal: String,
-    order: Object,
+    order: {
+      type: Object,
+      default: null
+    },
     orderDetail: Array,
     isUpdate: Boolean,
   },
@@ -232,14 +262,17 @@ export default {
         : null,
       loadingHeader: true,
       orderStatusOptions: [
-        { value: "1", text: 'Chờ xác nhận' },
-        { value: "2", text: 'Đã xác nhận' },
-        { value: "3", text: 'Đã huỷ' },
+        { value: 1, text: 'Chờ xác nhận' },
+        { value: 2, text: 'Đã xác nhận' },
+        { value: 3, text: 'Đã huỷ' },
       ],
       promotionOptions: [],
       productOptions: [],
       currentData: Object.assign({}, initOrder),
-      currentDetailData: [Object.assign({}, initOrderDetail)],
+      currentDetailData: [],
+      currentDetailId: null,
+      currentSelectDetail: null,
+      loadingOrderDetail: true,
     };
   },
   mixins: [baseMixins],
@@ -267,8 +300,11 @@ export default {
   },
   watch: {
     isUpdate(newValue, oldValue) {
-      console.log(newValue)
-      if (newValue) this.setCurrentUpdateDetailData()
+      // if (newValue) this.setCurrentUpdateDetailData()
+    },
+    order() {
+      this.setCurrentUpdateData()
+      this.fetchOrderDetailById()
     }
   },
   mounted() {
@@ -287,6 +323,10 @@ export default {
     } else {
       this.getProductOptions(this.getProducts)
     }
+
+    this.$root.$on('bv::modal::show', (bvEvent, modalId) => {
+      this.fetchOrderDetailById()
+    })
   },
   computed: {
     disabledUpdateOrder() {
@@ -294,6 +334,10 @@ export default {
     },
   },
   methods: {
+    addNewProductForDetail() {
+      let newProduct = Object.assign({}, { ...initOrderDetail })
+      this.currentDetailData.push(newProduct)
+    },
     calculateProductPrice() {
       this.currentDetailData.productPrice = this.currentDetailData && this.currentDetailData.length > 0
         ? this.currentDetailData.map(item => item.quantity * item.sellPrice).reduce((prev, current) => prev + current, 0)
@@ -312,13 +356,29 @@ export default {
       }
     },
     setCurrentUpdateDetailData() {
-      if (!this.orderDetail) return
-      this.currentDetailData = this.orderDetail.map(item => {
+      this.currentDetailData = this.currentDetailData.map(item => {
         return {
           ...item,
-          product: item.product ? { text: product.productName, value: product.productId, img: product.mainImg, sellPrice: product.sellPrice, } : null,
+          product: item.product ? { text: item.product.productName, value: item.product.productId, img: item.product.mainImg, sellPrice: item.product.sellPrice, } : null,
         }
       })
+    },
+    async fetchOrderDetailById() {
+      if (!this.order || !this.order.orderId) return
+      let response = await this.$store.dispatch(FETCH_ORDER_DETAIL_BY_ORDER_ID, this.order.orderId);
+      if (response && response.data && response.data.success) {
+        this.currentDetailData = [...response.data.data]
+        this.setCurrentUpdateDetailData()
+        setTimeout(() => {
+          if (this.loadingOrderDetail) this.loadingOrderDetail = false 
+        }, 300)
+      } else {
+        this.$message({
+          message: "Lấy chi tiết đơn hàng không thành công.",
+          type: "error",
+          showClose: true,
+        });
+      }
     },
     validateKeyCode: function (e) {
       if ((e.key < 48 || e.key > 57 || e.charCode === 13) && e.charCode !== 45 && e.charCode !== 32) {
@@ -345,11 +405,13 @@ export default {
         }
       })
     },
+    getTotalProductPrice() {
+      return this.currentDetailData && this.currentDetailData.length > 0
+        ? this.currentDetailData.map(item => item.quantity && item.product.sellPrice ? item.quantity * item.product.sellPrice : 0).reduce((prev, current) => prev + current, 0)
+        : 0
+    },
     getFormatPrice(price) {
       return price ? formatPriceSearchV2(price + '') : 0
-    },
-    formatTotalPrice() {
-      this.currentData.totalPrice = this.currentData.totalPrice !== null ? formatPriceSearchV2(this.currentData.totalPrice + '') : null
     },
     async handleCreateAndUpdateOrder() {
       let {
@@ -370,7 +432,7 @@ export default {
       let payload = {
         orderId,
         orderData: {
-          totalPrice,
+          totalPrice: this.getTotalProductPrice(),
           promotionId: promotion ? promotion.value : null,
           note,
           totalPrice: totalPrice && Number((totalPrice + '').replace(',', '')),
@@ -406,9 +468,7 @@ export default {
               type: "success",
               showClose: true,
             });
-            setTimeout(() => {
-              this.cancelCreateOrder(true)
-            }, 500)
+            this.cancelCreateOrder(true)
           }
         })
       }
@@ -426,9 +486,7 @@ export default {
               type: "success",
               showClose: true,
             });
-            setTimeout(() => {
-              this.cancelCreateOrder(true)
-            }, 500)
+            this.cancelCreateOrder(true)
           }
         }
       }
@@ -443,39 +501,63 @@ export default {
       this.handleCreateAndUpdateOrder();
     },
     handleReset() {
-      if (this.isUpdate) {
-        this.setCurrentUpdateData()
-        this.setCurrentUpdateDetailData()
-      }
-      if (!this.isUpdate) {
-        this.currentData = Object.assign({}, initOrder)
-        this.currentDetailData = [Object.assign({}, initOrderDetail)]
-      }
+      // if (this.isUpdate) {
+      //   this.setCurrentUpdateData()
+      //   this.setCurrentUpdateDetailData()
+      // }
+      // if (!this.isUpdate) {
+      //   this.currentData = Object.assign({}, initOrder)
+      //   this.currentDetailData = []
+      // }
 
-      this.$nextTick(() => {
-        this.$v.$reset();
-      });
+      // this.$nextTick(() => {
+      //   this.$v.$reset();
+      // });
     },
     validationStatus: function (validation) {
       return typeof validation != "undefined" ? validation.$error : false;
     },
+    handleShowModalCreateOrder() {
+      this.fetchOrderDetailById()
+    },
     cancelCreateOrder(isFetchOrders) {
       this.$v.$reset()
-      this.$root.$emit("bv::hide::modal", "modal-create-order");
+      this.loadingOrderDetail = true
+      this.currentData = Object.assign({}, {...initOrder})
+      this.currentDetailData = []
       this.$emit('cancelCreateOrder', isFetchOrders)
+      this.$root.$emit("bv::hide::modal", "modal-create-order");
     },
-    openModalDeleteOrderDetail(item, indexVal) {
-      if (item && item.order_detail_id) {
-        this.$emit('openModalDeleteOrderDetail', item.order_detail_id)
-        // this.$root.$emit("bv::show::modal", "delete-order-detail");
+    openModalDeleteOrderDetail(orderDetail, indexVal) {
+      if (orderDetail && orderDetail.order_detail_id) {
+        this.currentDetailId = orderDetail.order_detail_id
+        this.currentSelectDetail = orderDetail
+        this.$root.$emit("bv::show::modal", "delete-order-detail");
       }
       else {
         this.currentDetailData = this.currentDetailData.filter((item, index) => index !== indexVal)
       }
     },
-    addNewProductForDetail() {
-      let newProduct = Object.assign({}, { ...initOrderDetail })
-      this.currentDetailData.push(newProduct)
+    cancelDeleteOrderDetail() {
+      this.$root.$emit("bv::hide::modal", "delete-order-detail");
+    },
+    async handleDeleteOrderDetail() {
+      if (this.currentDetailId) {
+        let res = await this.$store.dispatch(DELETE_ORDER_DETAIL, this.currentDetailId)
+
+        if (res.status === 200) {
+          this.cancelDeleteOrderDetail()
+          this.currentDetailData = this.currentDetailData.filter(item => item.order_detail_id !== this.currentDetailId)
+          this.currentDetailId = null
+          this.currentSelectDetail = null
+          this.$message.closeAll()
+          this.$message({
+            message: "Xoá sản phẩm khỏi đơn hàng thành công.",
+            type: "success",
+            showClose: true,
+          });
+        }
+      }
     }
   },
 };

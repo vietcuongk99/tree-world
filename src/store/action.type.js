@@ -43,5 +43,10 @@ export const CREATE_ORDER_DETAIL = 'createOrderDetail'
 export const UPDATE_ORDER_DETAIL = 'updateOrderDetail'
 export const DELETE_ORDER_DETAIL = 'deleteOrderDetail'
 
+export const FETCH_REVIEWS = 'fetchReviews'
+export const FETCH_REVIEW_BY_ID = 'fetchReviewById'
+export const CREATE_REVIEW = 'createReview'
+export const UPDATE_REVIEW = 'updateReview'
+
 
 

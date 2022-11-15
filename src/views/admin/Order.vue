@@ -110,7 +110,6 @@
       :currentTitleModal="currentTitleModalCreateOrder"
       :isUpdate="isUpdateOrder"
       @cancelCreateOrder="cancelCreateOrder"
-      @openModalDeleteOrderDetail="openModalDeleteOrderDetail"
     />
     <b-modal hide-footer id="delete-order-detail" :title="'Xác nhận xoá sản phẩm khỏi đơn hàng'" :no-close-on-backdrop="true">
       <div class="pb-3">
@@ -151,7 +150,7 @@ const ACTION_FOR_ORDER = {
 }
 
 const initOrder = {
-  totalPrice: null,
+  totalPrice: 0,
   note: null,
   orderStatusId: null,
   date: null,
@@ -163,7 +162,7 @@ const initOrder = {
   phoneNumber: 0,
   orderId: null,
   promotion: null,
-  orderStatus: null,
+  orderStatus: { id: 1, statusName: "Chờ xác nhận" },
   user: null
 };
 
@@ -172,7 +171,7 @@ const initOrderDetail = {
   order: null,
   product: null,
   productName: null,
-  productPrice: null,
+  productPrice: 0,
   quantity: null
 }
 
@@ -190,7 +189,6 @@ export default {
       isUpdateOrder: false,
       currentOrder: null,
       currentOrderDetail: [],
-      currentOrderDetailId: null,
       currentActionForOrder: null,
       currentTitleModalAction: null,
       currentContentModalAction: null,
@@ -244,10 +242,6 @@ export default {
     },
   },
   methods: {
-    openModalDeleteOrderDetail(orderDetailId) {
-      this.currentOrderDetailId = orderDetailId
-      this.$root.$emit("bv::show::modal", "delete-order-detail");
-    },
     getUserPlace(order) {
       if (!order) return ''
 
@@ -287,19 +281,6 @@ export default {
 
       if (response && response.data) this.$store.commit("setOrders", response.data.data);
     },
-    async fetchOrderDetailById(orderId, action) {
-      let response = await this.$store.dispatch(FETCH_ORDER_DETAIL_BY_ORDER_ID, orderId);
-      if (response && response.data && response.data.success) {
-        this.currentOrderDetail = [...response.data.data]
-        action()
-      } else {
-        this.$message({
-          message: "Lấy chi tiết đơn hàng không thành công.",
-          type: "error",
-          showClose: true,
-        });
-      }
-    },
     navigateToOrderDetail(orderId) {
       this.$router.push({
         path: '/admin/order-detail/order/',
@@ -311,18 +292,17 @@ export default {
       this.isUpdateOrder = true
       this.currentTitleModalCreateOrder = 'Cập nhật đơn hàng'
       this.currentOrder = {...order}
-      this.fetchOrderDetailById(order.orderId, () => {
-        this.$root.$emit("bv::show::modal", "modal-create-order");
-      })
+      this.$root.$emit("bv::show::modal", "modal-create-order");
+      // this.fetchOrderDetailById(order.orderId, () => {
+      //   this.$root.$emit("bv::show::modal", "modal-create-order");
+      // })
     },
     navigateToCreateOrder() {
       this.currentTitleModalCreateOrder = 'Tạo đơn hàng'
-      this.currentOrderDetail = [Object.assign({}, {...initOrderDetail})]
       this.currentOrder = Object.assign({}, {...initOrder})
       this.$root.$emit("bv::show::modal", "modal-create-order");
     },
     cancelCreateOrder(isFetchOrders) {
-      this.currentOrderDetail = [Object.assign({}, {...initOrderDetail})]
       this.currentOrder = Object.assign({}, {...initOrder})
       this.currentTitleModalCreateOrder = null
       this.isUpdateOrder = false
@@ -427,26 +407,6 @@ export default {
         this.cancelActionForOrder()
       }
     },
-    cancelDeleteOrderDetail() {
-      this.$root.$emit("bv::hide::modal", "delete-order-detail");
-    },
-    async handleDeleteOrderDetail() {
-      if (this.currentOrderDetailId) {
-        let res = await this.$store.dispatch(DELETE_ORDER_DETAIL, this.currentOrderDetailId)
-
-        if (res.status === 200) {
-          this.cancelDeleteOrderDetail()
-          this.currentOrderDetail = this.currentOrderDetail.filter(item => item.order_detail_id != this.currentOrderDetailId)
-          this.currentOrderDetailId = null
-          this.$message.closeAll()
-          this.$message({
-            message: "Xoá sản phẩm khỏi đơn hàng thành công.",
-            type: "success",
-            showClose: true,
-          });
-        }
-      }
-    }
   },
 }
 </script>
