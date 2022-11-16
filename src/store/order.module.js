@@ -1,6 +1,7 @@
 import {
   FETCH_ORDERS, CREATE_ORDER, UPDATE_ORDER, DELETE_ORDER,
-  FETCH_ORDER_DETAIL, FETCH_ORDER_DETAIL_BY_ID, FETCH_ORDER_DETAIL_BY_ORDER_ID, CREATE_ORDER_DETAIL, UPDATE_ORDER_DETAIL, DELETE_ORDER_DETAIL
+  FETCH_ORDER_DETAIL, FETCH_ORDER_DETAIL_BY_ID, FETCH_ORDER_DETAIL_BY_ORDER_ID, CREATE_ORDER_DETAIL,
+  UPDATE_ORDER_DETAIL, UPDATE_ORDER_DETAIL_BY_ORDER_ID, CREATE_ORDER_DETAIL_BY_ORDER_ID, DELETE_ORDER_DETAIL
 } from "./action.type";
 import baseMixins from '../components/mixins/base'
 const state = {
@@ -83,6 +84,18 @@ const actions = {
   [UPDATE_ORDER_DETAIL](context, payload) {
     return new Promise(async resolve => {
       let response = await baseMixins.methods.put(`/rest/orderDetails/${payload.orderDetailId}`, payload.orderDetailData)
+      resolve(response)
+    })
+  },
+  [CREATE_ORDER_DETAIL_BY_ORDER_ID](context, payload) {
+    return new Promise(async resolve => {
+      let response = await baseMixins.methods.post('/rest/orderDetails/listOrderDetail', payload)
+      resolve(response)
+    })
+  },
+  [UPDATE_ORDER_DETAIL_BY_ORDER_ID](context, payload) {
+    return new Promise(async resolve => {
+      let response = await baseMixins.methods.put(`/rest/orderDetails/order/${payload.orderId}`, payload.orderDetailData)
       resolve(response)
     })
   },

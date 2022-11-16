@@ -112,7 +112,10 @@
                 <b-form-group>
                   <label>Sản phẩm:</label>
                   <multiselect v-model="item.product" track-by="text" label="text" :show-labels="false"
-                    :disabled="disabledUpdateOrder" placeholder="Chọn" :options="productOptions" :searchable="true">
+                    :disabled="disabledUpdateOrder" placeholder="Chọn" :options="productOptions" :searchable="true"
+                    @select="calculateProductPrice(index)"
+                    @remove="calculateProductPrice(index)"
+                  >
                     <template slot="singleLabel" slot-scope="{ option }">
                       {{ option.text }}
                     </template>
@@ -123,14 +126,14 @@
                 <b-form-group>
                   <label>Số lượng:</label>
                   <b-form-input id="input-product-quantity" v-model="item.quantity" type="number"
-                    placeholder="Nhập số lượng" :disabled="disabledUpdateOrder" @input="calculateProductPrice">
+                    placeholder="Nhập số lượng" :disabled="disabledUpdateOrder" @input="calculateProductPrice(index)">
                   </b-form-input>
                 </b-form-group>
               </b-col>
               <b-col md="2">
                 <b-form-group>
                   <label>Tổng giá:</label>
-                  <div>{{item.product && item.quantity ? getFormatPrice(item.product.sellPrice * item.quantity) : 0 }}đ</div>
+                  <div>{{getFormatPrice(item.productPrice) }}đ</div>
                 </b-form-group>
               </b-col>
               <b-col md="2">
@@ -150,12 +153,12 @@
           <b-col md="4">
             <b-form-group>
               <label class="font-weight-bold mr-2">Tổng giá sản phẩm:</label>
-              <span>{{ getFormatPrice(getTotalProductPrice()) }}đ</span>
+              <span>{{ getFormatPrice(getTotalProductPrice) }}đ</span>
             </b-form-group>
-            <!-- <b-form-group>
+            <b-form-group>
               <label class="font-weight-bold mr-2">Tổng giá đơn hàng:</label>
               <span>{{ getFormatPrice(currentData.totalPrice) }}đ</span>
-            </b-form-group> -->
+            </b-form-group>
           </b-col>
         </b-row>
       </div>
@@ -210,10 +213,11 @@ import {
   FETCH_PROMOTIONS,
   FETCH_PRODUCTS_AVAILABLE,
   CREATE_ORDER_DETAIL,
-  UPDATE_ORDER_DETAIL,
+  UPDATE_ORDER_DETAIL_BY_ORDER_ID,
   DELETE_ORDER_DETAIL,
   FETCH_ORDER_DETAIL_BY_ORDER_ID
 } from "@/store/action.type";
+import { CREATE_ORDER_DETAIL_BY_ORDER_ID } from '../../../store/action.type';
 
 const initOrder = {
   note: null,
@@ -238,7 +242,7 @@ const initOrderDetail = {
   product: null,
   productName: null,
   productPrice: 0,
-  quantity: null
+  quantity: 1
 }
 
 export default {
@@ -299,9 +303,6 @@ export default {
     },
   },
   watch: {
-    isUpdate(newValue, oldValue) {
-      // if (newValue) this.setCurrentUpdateDetailData()
-    },
     order() {
       this.setCurrentUpdateData()
       this.fetchOrderDetailById()
@@ -332,18 +333,30 @@ export default {
     disabledUpdateOrder() {
       return (this.currentData && this.isUpdate && !(this.currentData.orderStatus && this.currentData.orderStatus.value === 1))
     },
+    getTotalProductPrice() {
+      return this.currentDetailData && this.currentDetailData.length > 0
+        ? this.currentDetailData.map(item => item.product && item.quantity ? item.product.sellPrice * item.quantity : 0).reduce((prev, current) => prev + current, 0)
+        : 0
+    },
   },
   methods: {
     addNewProductForDetail() {
       let newProduct = Object.assign({}, { ...initOrderDetail })
       this.currentDetailData.push(newProduct)
     },
-    calculateProductPrice() {
-      this.currentDetailData.productPrice = this.currentDetailData && this.currentDetailData.length > 0
-        ? this.currentDetailData.map(item => item.quantity * item.sellPrice).reduce((prev, current) => prev + current, 0)
+    calculateProductPrice(index) {
+      this.$nextTick(() => {
+        this.currentDetailData[index].productPrice = this.currentDetailData[index].product && this.currentDetailData[index].quantity
+          ? this.currentDetailData[index].product.sellPrice * this.currentDetailData[index].quantity
+          : 0
+        this.calculateOrderPrice()
+      })
+      
+    },
+    calculateOrderPrice() {
+      this.currentData.totalPrice = this.currentDetailData && this.currentDetailData.length > 0
+        ? this.currentDetailData.map(item => item.product && item.quantity ? item.product.sellPrice * item.quantity : 0).reduce((prev, current) => prev + current, 0)
         : 0
-
-      this.currentData.totalPrice = this.currentDetailData.productPrice
     },
     setCurrentUpdateData() {
       if (!this.order) return
@@ -405,11 +418,6 @@ export default {
         }
       })
     },
-    getTotalProductPrice() {
-      return this.currentDetailData && this.currentDetailData.length > 0
-        ? this.currentDetailData.map(item => item.quantity && item.product.sellPrice ? item.quantity * item.product.sellPrice : 0).reduce((prev, current) => prev + current, 0)
-        : 0
-    },
     getFormatPrice(price) {
       return price ? formatPriceSearchV2(price + '') : 0
     },
@@ -432,7 +440,7 @@ export default {
       let payload = {
         orderId,
         orderData: {
-          totalPrice: this.getTotalProductPrice(),
+          totalPrice: this.getTotalProductPrice,
           promotionId: promotion ? promotion.value : null,
           note,
           totalPrice: totalPrice && Number((totalPrice + '').replace(',', '')),
@@ -443,24 +451,35 @@ export default {
         },
       };
 
+      let payloadForCreateDetail = this.currentDetailData.map(item => {
+        return {
+          productId: item.product ? item.product.value + '' : null,
+          productName: item.product ? item.product.text : null,
+          quantity: item.quantity,
+          productPrice: (item.product && item.quantity ? item.product.sellPrice * item.quantity : 0) + '',
+        }
+      })
+
+      let payloadForUpdateDetail = {
+        orderId: orderId,
+        orderDetailData: this.currentDetailData.map(item => {
+          return {
+            order_detail_id: item.order_detail_id ? item.order_detail_id + '' : null,
+            productId: item.product ? item.product.value + '' : null,
+            productName: item.product ? item.product.text : null,
+            quantity: item.quantity,
+            productPrice: (item.product && item.quantity ? item.product.sellPrice * item.quantity : 0) + '',
+          }
+        }),
+      }
+
       let successMsg = `${this.isUpdate ? 'Cập nhật' : 'Tạo'} đơn hàng thành công.`
       let errorMsg = `${this.isUpdate ? 'Cập nhật' : 'Tạo'} đơn hàng không thành công.`
-
-      let payloadForDetail = {
-        orderDetailId: this.currentDetailData.order_detail_id,
-        orderDetailData: {
-          orderId: orderId + '',
-          productId: this.currentDetailData.product ? this.currentDetailData.product.value + '' : null,
-          productName: this.currentDetailData.product ? this.currentDetailData.product.text : null,
-          quantity: this.currentDetailData.quantity,
-          productPrice: this.currentDetailData.productPrice + '',
-        },
-      }
 
       if (this.isUpdate) {
         Promise.all([
           this.$store.dispatch(UPDATE_ORDER, payload),
-          this.$store.dispatch(UPDATE_ORDER_DETAIL, payloadForDetail)
+          this.$store.dispatch(UPDATE_ORDER_DETAIL_BY_ORDER_ID, payloadForUpdateDetail)
         ]).then(res => {
           if (res[0].status === 200 && res[1].status === 200) {
             this.$message({
@@ -477,8 +496,14 @@ export default {
         let res = await this.$store.dispatch(CREATE_ORDER, payload.orderData)
 
         if (res.status === 200 && res.data && res.data.data) {
-          payloadForDetail.orderDetailData.orderId = res.data.data.orderId
-          let resForDetail = await this.$store.dispatch(CREATE_ORDER_DETAIL, payloadForDetail.orderDetailData)
+          let newOrderId = res.data.data.orderId
+          payloadForCreateDetail = payloadForCreateDetail.map(item => {
+            return {
+              ...item,
+              orderId: newOrderId
+            }
+          })
+          let resForDetail = await this.$store.dispatch(CREATE_ORDER_DETAIL_BY_ORDER_ID, payloadForCreateDetail)
 
           if (resForDetail.status === 200) {
             this.$message({
@@ -536,6 +561,7 @@ export default {
       }
       else {
         this.currentDetailData = this.currentDetailData.filter((item, index) => index !== indexVal)
+        this.calculateOrderPrice()
       }
     },
     cancelDeleteOrderDetail() {
