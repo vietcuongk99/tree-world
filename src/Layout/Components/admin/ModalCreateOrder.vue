@@ -183,10 +183,10 @@
         Bạn có muốn xoá sản phẩm <span class="font-weight-bold" v-if="currentSelectDetail">
         {{ currentSelectDetail.productName }}</span> khỏi đơn hàng không ?
       </div>
-      <b-button class="mr-2 btn-light2 pull-right" @click="cancelDeleteOrderDetail()">
+      <b-button class="mr-2 btn-light2 pull-right" @click.prevent="cancelDeleteOrderDetail()">
         Hủy
       </b-button>
-      <b-button variant="primary pull-right" class="mr-2" type="submit" @click="handleDeleteOrderDetail()">
+      <b-button variant="primary pull-right" class="mr-2" type="submit" @click.prevent="handleDeleteOrderDetail()">
         Đồng ý
       </b-button>
     </b-modal>
@@ -326,12 +326,13 @@ export default {
     }
 
     this.$root.$on('bv::modal::show', (bvEvent, modalId) => {
-      this.fetchOrderDetailById()
+      if(modalId === 'modal-create-order') this.fetchOrderDetailById()
     })
   },
   computed: {
     disabledUpdateOrder() {
-      return (this.currentData && this.isUpdate && !(this.currentData.orderStatus && this.currentData.orderStatus.value === 1))
+      return false
+      // return (this.currentData && this.isUpdate && !(this.currentData.orderStatus && this.currentData.orderStatus.value === 1))
     },
     getTotalProductPrice() {
       return this.currentDetailData && this.currentDetailData.length > 0
@@ -462,25 +463,38 @@ export default {
 
       let payloadForUpdateDetail = {
         orderId: orderId,
-        orderDetailData: this.currentDetailData.map(item => {
-          return {
-            order_detail_id: item.order_detail_id ? item.order_detail_id + '' : null,
-            productId: item.product ? item.product.value + '' : null,
-            productName: item.product ? item.product.text : null,
-            quantity: item.quantity,
-            productPrice: (item.product && item.quantity ? item.product.sellPrice * item.quantity : 0) + '',
-          }
-        }),
+        orderDetailData: this.currentDetailData
+          .filter(detail => detail && detail.order_detail_id)
+          .map(item => {
+            return {
+              order_detail_id: item.order_detail_id ? item.order_detail_id + '' : null,
+              productId: item.product ? item.product.value + '' : null,
+              productName: item.product ? item.product.text : null,
+              quantity: item.quantity,
+              productPrice: (item.product && item.quantity ? item.product.sellPrice * item.quantity : 0) + '',
+            }
+          }),
+        newOrderDetailData: this.currentDetailData
+          .filter(detail => detail && !detail.order_detail_id)
+          .map(item => {
+            return {
+              orderId: orderId,
+              productId: item.product ? item.product.value + '' : null,
+              productName: item.product ? item.product.text : null,
+              quantity: item.quantity,
+              productPrice: (item.product && item.quantity ? item.product.sellPrice * item.quantity : 0) + '',
+            }
+          })
       }
 
       let successMsg = `${this.isUpdate ? 'Cập nhật' : 'Tạo'} đơn hàng thành công.`
       let errorMsg = `${this.isUpdate ? 'Cập nhật' : 'Tạo'} đơn hàng không thành công.`
 
       if (this.isUpdate) {
-        Promise.all([
-          this.$store.dispatch(UPDATE_ORDER, payload),
-          this.$store.dispatch(UPDATE_ORDER_DETAIL_BY_ORDER_ID, payloadForUpdateDetail)
-        ]).then(res => {
+        let promiseList = [this.$store.dispatch(UPDATE_ORDER, payload)]
+        if (payloadForUpdateDetail.orderDetailData.length > 0) promiseList.push(this.$store.dispatch(UPDATE_ORDER_DETAIL_BY_ORDER_ID, payloadForUpdateDetail))
+        if (payloadForUpdateDetail.newOrderDetailData.length > 0) promiseList.push(this.$store.dispatch(CREATE_ORDER_DETAIL_BY_ORDER_ID, payloadForUpdateDetail.newOrderDetailData))
+        Promise.all(promiseList).then(res => {
           if (res[0].status === 200 && res[1].status === 200) {
             this.$message({
               message: successMsg,
@@ -541,9 +555,6 @@ export default {
     },
     validationStatus: function (validation) {
       return typeof validation != "undefined" ? validation.$error : false;
-    },
-    handleShowModalCreateOrder() {
-      this.fetchOrderDetailById()
     },
     cancelCreateOrder(isFetchOrders) {
       this.$v.$reset()
