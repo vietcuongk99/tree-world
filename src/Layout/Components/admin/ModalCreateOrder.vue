@@ -45,6 +45,9 @@
               <div v-if="!$v.currentData.phoneNumber.required" class="invalid-feedback">
                 Số điện thoại không được để trống.
               </div>
+              <div v-if="!$v.currentData.phoneNumber.validPhoneNumber" class="invalid-feedback">
+                Số điện thoại không hợp lệ.
+              </div>
             </b-form-group>
           </b-col>
         </b-row>
@@ -65,23 +68,38 @@
         <b-row>
           <b-col md="4">
             <b-form-group>
-              <label>Phường/xã/huyện:</label>
-              <b-form-input id="input-district" type="text" v-model.trim="currentData.district" placeholder="Nhập tên"
-                :disabled="disabledUpdateOrder"></b-form-input>
+              <label>Phường/xã/huyện <span class="text-danger">*</span>:</label>
+              <b-form-input id="input-district" type="text" v-model.trim="$v.currentData.district.$model"
+                placeholder="Nhập tên" :class="{
+                  'is-invalid': validationStatus($v.currentData.district),
+                }" :disabled="disabledUpdateOrder"></b-form-input>
+              <div v-if="!$v.currentData.district.required" class="invalid-feedback">
+                Phường/xã/huyện không được để trống.
+              </div>
             </b-form-group>
           </b-col>
           <b-col md="4">
             <b-form-group>
-              <label>Quận/Thị trấn:</label>
-              <b-form-input id="input-ward" type="text" v-model.trim="currentData.wards" placeholder="Nhập tên"
-                :disabled="disabledUpdateOrder"></b-form-input>
+              <label>Quận/Thị trấn <span class="text-danger">*</span>:</label>
+              <b-form-input id="input-wards" type="text" v-model.trim="$v.currentData.wards.$model"
+                placeholder="Nhập tên" :class="{
+                  'is-invalid': validationStatus($v.currentData.wards),
+                }" :disabled="disabledUpdateOrder"></b-form-input>
+              <div v-if="!$v.currentData.wards.required" class="invalid-feedback">
+                Quận/Thị trấn không được để trống.
+              </div>
             </b-form-group>
           </b-col>
           <b-col md="4">
             <b-form-group>
-              <label>Thành phố:</label>
-              <b-form-input id="input-city" type="text" v-model.trim="currentData.city" placeholder="Nhập tên"
-                :disabled="disabledUpdateOrder"></b-form-input>
+              <label>Thành phố <span class="text-danger">*</span>:</label>
+              <b-form-input id="input-city" type="text" v-model.trim="$v.currentData.city.$model"
+                placeholder="Nhập tên" :class="{
+                  'is-invalid': validationStatus($v.currentData.city),
+                }" :disabled="disabledUpdateOrder"></b-form-input>
+              <div v-if="!$v.currentData.city.required" class="invalid-feedback">
+                Thành phố không được để trống.
+              </div>
             </b-form-group>
           </b-col>
         </b-row>
@@ -197,7 +215,7 @@
 <script>
 import PageTitle from "@/Layout/Components/PageTitle";
 import baseMixins from "@/components/mixins/base";
-import { required } from "vuelidate/lib/validators";
+import { required, helpers } from "vuelidate/lib/validators";
 import { formatPriceSearchV2 } from "@/common/common";
 import Vue from "vue";
 import Multiselect from "vue-multiselect";
@@ -245,6 +263,8 @@ const initOrderDetail = {
   quantity: 1
 }
 
+const validPhoneNumber = helpers.regex('validPhoneNumber', /^(0?)(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$/)
+
 export default {
   name: "ModalCreateOrder",
   components: { PageTitle, DatePicker },
@@ -291,8 +311,18 @@ export default {
       address: {
         required,
       },
+      city: {
+        required,
+      },
+      district: {
+        required,
+      },
+      wards: {
+        required,
+      },
       phoneNumber: {
-        required
+        required,
+        validPhoneNumber,
       }
     },
   },
@@ -341,6 +371,15 @@ export default {
     },
   },
   methods: {
+    checkIncorrectProduct() {
+      if (this.currentDetailData && this.currentDetailData.length > 0) {
+        let incorrectDetail = this.currentDetailData.filter(item => !item.product || !item.quantity)
+
+        return (incorrectDetail && incorrectDetail.length > 0)
+      }
+
+      return true
+    },
     addNewProductForDetail() {
       let newProduct = Object.assign({}, { ...initOrderDetail })
       this.currentDetailData.push(newProduct)
@@ -423,6 +462,8 @@ export default {
       return price ? formatPriceSearchV2(price + '') : 0
     },
     async handleCreateAndUpdateOrder() {
+      let successMsg = `${this.isUpdate ? 'Cập nhật' : 'Tạo'} đơn hàng thành công.`
+      let errorMsg = `${this.isUpdate ? 'Cập nhật' : 'Tạo'} đơn hàng không thành công.`
       let {
         totalPrice,
         note,
@@ -487,9 +528,6 @@ export default {
           })
       }
 
-      let successMsg = `${this.isUpdate ? 'Cập nhật' : 'Tạo'} đơn hàng thành công.`
-      let errorMsg = `${this.isUpdate ? 'Cập nhật' : 'Tạo'} đơn hàng không thành công.`
-
       if (this.isUpdate) {
         let promiseList = [this.$store.dispatch(UPDATE_ORDER, payload)]
         if (payloadForUpdateDetail.orderDetailData.length > 0) promiseList.push(this.$store.dispatch(UPDATE_ORDER_DETAIL_BY_ORDER_ID, payloadForUpdateDetail))
@@ -536,6 +574,19 @@ export default {
 
       if (this.$v.currentData.$invalid) {
         return;
+      }
+
+      let verifyProduct = this.checkIncorrectProduct()
+
+      if (verifyProduct) {
+        this.$message.closeAll()
+
+        this.$message({
+          message: "Bạn cần điền đầy đủ thông tin sản phẩm.",
+          type: "warning",
+          showClose: true,
+        })
+        return
       }
       this.handleCreateAndUpdateOrder();
     },

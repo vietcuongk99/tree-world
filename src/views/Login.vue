@@ -47,7 +47,7 @@
                   </b-form-group>
                 </div>
               </div>
-              <div class="modal-footer clearfix justify-content-center">
+              <div class="modal-footer clearfix justify-content-center flex-column">
                 <div class="w-100">
                   <b-button
                     type="submit"
@@ -59,6 +59,9 @@
                     :disabled="loadingButton"
                   >{{ step !== 1 ? 'Tiếp tục' : 'Đăng nhập' }}
                   </b-button>
+                </div>
+                <div class="w-100 p-2 text-center">
+                  <div @click="loginAsGuest" class="text-success" style="cursor: pointer">Đăng nhập với tài khoản khách</div>
                 </div>
               </div>
             </div>
@@ -183,6 +186,17 @@ export default {
           showClose: true,
         });
       }
+    },
+    async loginAsGuest() {
+      let response = {
+        data: {
+          userId: null,
+          token: null,
+          role: '[GUEST]',
+          username: 'guest',
+        }
+      }
+      this.handleAfterLogin(response)
     },
   },
 };

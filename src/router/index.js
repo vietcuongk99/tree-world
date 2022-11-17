@@ -163,8 +163,9 @@ router.beforeEach((to, from, next) => {
   }
   const publicPages = ['/login', '/config-api'];
   const authRequired = !publicPages.includes(to.path);
-  const isAuthenticated = !!StorageService.get("Token");
   const isAdmin = StorageService.get("userInfo") && JSON.parse(StorageService.get("userInfo")).role === '[ADMIN]'
+  const isGuest = StorageService.get("userInfo") && JSON.parse(StorageService.get("userInfo")).role === '[GUEST]'
+  const isAuthenticated = !!StorageService.get("Token") || isGuest;
   if (to.path.includes('/admin') && isAuthenticated && !isAdmin) {
     next('/error-not-allow')
   }
