@@ -41,9 +41,17 @@ const actions = {
     }
   },
   login(context, payload) {
-    console.log(123123123)
     return new Promise(async resolve => {
       axios.post(`${API_ENDPOINT}/login`,payload).then(response => {
+        resolve(response)
+      }).catch((error) => {
+        resolve(error)
+      })
+    })
+  },
+  register(context, payload) {
+    return new Promise(async resolve => {
+      axios.post(`${API_ENDPOINT}/rest/users`,payload).then(response => {
         resolve(response)
       }).catch((error) => {
         resolve(error)

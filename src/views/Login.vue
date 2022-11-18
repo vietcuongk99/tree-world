@@ -63,6 +63,9 @@
                 <div class="w-100 p-2 text-center">
                   <div @click="loginAsGuest" class="text-success" style="cursor: pointer">Đăng nhập với tài khoản khách</div>
                 </div>
+                <div class="w-100 text-center">
+                  <div @click="navigateToRegister" class="text-success" style="cursor: pointer">Tạo tài khoản mới</div>
+                </div>
               </div>
             </div>
           </div>
@@ -198,6 +201,9 @@ export default {
       }
       this.handleAfterLogin(response)
     },
+    navigateToRegister() {
+      router.push({ path: '/register' })
+    }
   },
 };
 </script>
