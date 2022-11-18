@@ -52,7 +52,8 @@ import 'ant-design-vue/lib/comment/style/css';
 import 'ant-design-vue/lib/avatar/style/css';
 import 'ant-design-vue/lib/form/style/css';
 import 'ant-design-vue/lib/list/style/css';
-import { Menu, Icon, Select, Spin, Table, Row, Col, Input, Button, Pagination, Steps, TreeSelect, Skeleton, Comment, Avatar, Form, List } from 'ant-design-vue';
+import 'ant-design-vue/lib/dropdown/style/css';
+import { Menu, Icon, Select, Spin, Table, Row, Col, Input, Button, Pagination, Steps, TreeSelect, Skeleton, Comment, Avatar, Form, List, Dropdown } from 'ant-design-vue';
 Vue.use(Menu);
 Vue.use(Icon);
 Vue.use(Select);
@@ -70,6 +71,7 @@ Vue.use(Comment);
 Vue.use(Avatar);
 Vue.use(Form);
 Vue.use(List);
+Vue.use(Dropdown);
 
 import ToggleButton from 'vue-js-toggle-button'
 Vue.use(ToggleButton)

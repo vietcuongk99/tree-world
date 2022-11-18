@@ -59,8 +59,11 @@
                 <div class="w-100 p-2 text-center">
                   <div @click="loginAsGuest" class="text-success" style="cursor: pointer">Đăng nhập với tài khoản khách</div>
                 </div>
-                <div class="w-100 text-center">
-                  <div @click="navigateToRegister" class="text-success" style="cursor: pointer">Tạo tài khoản mới</div>
+                <div class="w-100 mb-2 text-center">
+                  <div @click="navigate('/register')" class="text-success" style="cursor: pointer">Tạo tài khoản mới</div>
+                </div>
+                <div class="w-100 mb-2 text-center">
+                  <div @click="navigate('/reset-password')" class="text-success" style="cursor: pointer">Quên mật khẩu ?</div>
                 </div>
               </div>
             </div>
@@ -89,6 +92,9 @@ import baseMixins from "@/components/mixins/base";
 import { required, helpers } from "vuelidate/lib/validators";
 
 const API_ENDPOINT = Configuration.value("baseURL");
+import {
+  LOGIN, REGISTER, CHANGE_PASSWORD, SEND_EMAIL_RESET_PASSWORD
+} from "@/store/action.type";
 
 export default {
   data() {
@@ -201,7 +207,7 @@ export default {
       
       this.loadingButton = true;
       EventBus.$emit("send-progress", true);
-      let response = await this.$store.dispatch('login', this.form)
+      let response = await this.$store.dispatch(LOGIN, this.form)
       if (response) {
         EventBus.$emit("close-progress", true);
         this.loadingButton = false;
@@ -228,8 +234,8 @@ export default {
       }
       this.handleAfterLogin(response)
     },
-    navigateToRegister() {
-      router.push({ path: '/register' })
+    navigate(path) {
+      router.push({ path })
     }
   },
 };

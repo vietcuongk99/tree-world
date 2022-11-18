@@ -102,6 +102,8 @@ import { EventBus } from "@/common/event-bus";
 import Configuration from "@/configuration";
 import baseMixins from "@/components/mixins/base";
 import { required, helpers } from "vuelidate/lib/validators";
+import { REGISTER } from '../store/action.type';
+
 
 const API_ENDPOINT = Configuration.value("baseURL");
 
@@ -211,7 +213,7 @@ export default {
       this.loadingButton = true;
       EventBus.$emit("send-progress", true);
       let {email, username, password} = {...this.form}
-      let response = await this.$store.dispatch('register', {
+      let response = await this.$store.dispatch(REGISTER, {
         email, username, password
       })
       if (response) {
