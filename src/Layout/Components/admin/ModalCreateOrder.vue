@@ -371,14 +371,14 @@ export default {
     },
   },
   methods: {
-    checkIncorrectProduct() {
+    checkInvalidProduct() {
       if (this.currentDetailData && this.currentDetailData.length > 0) {
-        let incorrectDetail = this.currentDetailData.filter(item => !item.product || !item.quantity)
+        let incorrectDetail = this.currentDetailData.filter(item => !item.product || item.quantity < 0 || !item.quantity)
 
         return (incorrectDetail && incorrectDetail.length > 0)
       }
 
-      return true
+      return false
     },
     addNewProductForDetail() {
       let newProduct = Object.assign({}, { ...initOrderDetail })
@@ -576,9 +576,9 @@ export default {
         return;
       }
 
-      let verifyProduct = this.checkIncorrectProduct()
+      let checkInvalidProduct = this.checkInvalidProduct()
 
-      if (verifyProduct) {
+      if (checkInvalidProduct) {
         this.$message.closeAll()
 
         this.$message({

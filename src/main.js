@@ -107,6 +107,9 @@ Vue.use(Loading, {
   loader: 'dots'
 });
 
+import VueSimpleAlert from "vue-simple-alert";
+Vue.use(VueSimpleAlert);
+
 library.add(fas);
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 // Use v-calendar & v-date-picker components

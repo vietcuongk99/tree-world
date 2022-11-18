@@ -126,10 +126,6 @@ export default {
       isFinishTimerOTP: false,
       needRegisterSmartOtp: false,
       step: 1,
-      dataQr: {
-        value: null,
-        size: 150
-      },
     };
   },
   components: {},

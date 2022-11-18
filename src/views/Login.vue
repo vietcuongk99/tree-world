@@ -26,24 +26,20 @@
                 </h4>
                 <div v-if="step === 1">
                   <b-form-group id="exampleInputGroup1" label-for="exampleInput1">
-                    <b-form-input
-                        id="exampleInput1"
-                        v-model="form.username"
-                        type="text"
-                        required
-                        placeholder="Tên đăng nhập"
-                    >
+                    <b-form-input id="exampleInput1" v-model="$v.form.username.$model" type="text" required
+                      placeholder="Tên đăng nhập" :class="{ 'is-invalid': validationStatus($v.form.username) }">
                     </b-form-input>
+                    <div v-if="!$v.form.username.required" class="invalid-feedback">
+                      Tên đăng nhập không được để trống.
+                    </div>
                   </b-form-group>
                   <b-form-group id="exampleInputGroup2" label-for="exampleInput2">
-                    <b-form-input
-                        id="exampleInput2"
-                        v-model="form.password"
-                        type="password"
-                        required
-                        placeholder="Mật khẩu"
-                    >
+                    <b-form-input id="exampleInput2" v-model="$v.form.password.$model" type="password" required
+                      placeholder="Mật khẩu" :class="{ 'is-invalid': validationStatus($v.form.password) }">
                     </b-form-input>
+                    <div v-if="!$v.form.password.required" class="invalid-feedback">
+                      Mật khẩu không được để trống.
+                    </div>
                   </b-form-group>
                 </div>
               </div>
@@ -90,6 +86,7 @@ import router from "../router/index";
 import {EventBus} from "@/common/event-bus";
 import Configuration from "@/configuration";
 import baseMixins from "@/components/mixins/base";
+import { required, helpers } from "vuelidate/lib/validators";
 
 const API_ENDPOINT = Configuration.value("baseURL");
 
@@ -97,8 +94,8 @@ export default {
   data() {
     return {
       form: {
-        username: "",
-        password: "",
+        username: null,
+        password: null,
       },
       loadingButton: false,
       requestId: null,
@@ -115,6 +112,16 @@ export default {
     };
   },
   components: {},
+  validations: {
+    form: {
+      username: {
+        required,
+      },
+      password: {
+        required,
+      },
+    },
+  },
   mixins: [baseMixins],
   mounted() {
     StorageService.destroy("Token")
@@ -136,6 +143,9 @@ export default {
       setTimeout(() => {
         this.isFinishTimer = true;
       }, 1000);
+    },
+    validationStatus: function (validation) {
+      return typeof validation != "undefined" ? validation.$error : false;
     },
     back() {
       this.step = this.needRegisterSmartOtp ? this.step - 1 : this.step - 2;
@@ -172,6 +182,23 @@ export default {
         });
     },
     async login() {
+      this.$v.$reset();
+      this.$v.$touch();
+
+      if (this.$v.form.$invalid) {
+        return;
+      }
+
+      if ((this.form.username && this.form.username.trim() === '') || (this.form.password&& this.form.password.trim() === '')) {
+        this.$message.closeAll()
+        this.$message({
+          message: 'Thông tin đăng nhập không hợp lệ',
+          type: "error",
+          showClose: true,
+        });
+        return
+      }
+      
       this.loadingButton = true;
       EventBus.$emit("send-progress", true);
       let response = await this.$store.dispatch('login', this.form)
