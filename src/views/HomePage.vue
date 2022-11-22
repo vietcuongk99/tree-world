@@ -113,7 +113,7 @@
                       <a href="/shop-detail">Shop Details</a>
                     </li>
                     <li>
-                      <a href="/shopping-cart">Shopping Carts</a>
+                      <a href="/cart">Shopping Carts</a>
                     </li>
                     <li>
                       <a href="/check-out">Check Out</a>
@@ -141,7 +141,7 @@
                   </a>
                 </li>
                 <li>
-                  <a href="#">
+                  <a href="/cart">
                     <font-awesome-icon icon="fa fa-shopping-bag" />
                     <span>3</span>
                   </a>

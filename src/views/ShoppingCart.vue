@@ -86,26 +86,7 @@
               </div>
             </div>
             <div class="col-lg-6 col-md-6">
-              <div class="header__top__right">
-                <!--              <div class="header__top__right__social">-->
-                <!--                <a href="#"><font-awesome-icon icon="fa fa-facebook"/></a>-->
-                <!--                <a href="#"><font-awesome-icon icon="fa fa-twitter"/></a>-->
-                <!--                <a href="#"><font-awesome-icon icon="fa fa-linkedin"/></a>-->
-                <!--                <a href="#"><font-awesome-icon icon="fa fa-pinterest-p"/></a>-->
-                <!--              </div>-->
-                <div class="header__top__right__language">
-                  <img src="img/language.png" alt="" />
-                  <div>English</div>
-                  <span class="arrow_carrot-down"></span>
-                  <ul>
-                    <li><a href="#">Spanis</a></li>
-                    <li><a href="#">English</a></li>
-                  </ul>
-                </div>
-                <div class="header__top__right__auth">
-                  <a href="#"><font-awesome-icon icon="fa fa-user" /> Login</a>
-                </div>
-              </div>
+              <UserHeader />
             </div>
           </div>
         </div>
@@ -129,7 +110,7 @@
                       <a href="/shop-detail">Shop Details</a>
                     </li>
                     <li>
-                      <a href="/shopping-cart">Shopping Carts</a>
+                      <a href="/cart">Shopping Carts</a>
                     </li>
                     <li><a href="/check-out">Check Out</a></li>
                     <li>
@@ -224,7 +205,7 @@
     <!-- Breadcrumb Section Begin -->
     <section class="breadcrumb-section set-bg" data-setbg="img/breadcrumb.jpg">
       <div class="container">
-        <div class="row">
+        <!-- <div class="row">
           <div class="col-lg-12 text-center">
             <div class="breadcrumb__text">
               <h2>Shopping Cart</h2>
@@ -234,7 +215,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
     </section>
     <!-- Breadcrumb Section End -->
@@ -286,8 +267,11 @@
                   </tr>
                 </tbody>
               </table>
-              <div class="d-flex justify-content-center" v-else>
-                Giỏ hàng trống!
+              <div class="d-flex justify-content-center flex-column align-items-center" v-else>
+                <div>
+                  <i class="fa-solid fa-bag-shopping" style="color: #b6b6b6; font-size: 2rem;"></i>
+                </div>
+                <div class="custom-empty-content my-2">Giỏ hàng trống</div>
               </div>
             </div>
           </div>
@@ -295,15 +279,19 @@
         <div class="row">
           <div class="col-lg-12">
             <div class="shoping__cart__btns">
-              <!-- <a href="/" class="primary-btn cart-btn">CONTINUE SHOPPING</a> -->
-              <button class="primary-btn cart-btn cart-btn-right" style="border: none; cursor: pointer" @click="confirmUpdateCart">
+              <a href="/" class="primary-btn cart-btn mx-0">Tiếp tục mua hàng</a>
+              <button v-if="listCart && listCart.length > 0"
+                class="primary-btn cart-btn cart-btn-right"
+                style="border: none; cursor: pointer"
+                @click="confirmUpdateCart"
+              >
                 <span v-if="!toggleUpdateCart">Cập nhật</span>
                 <span v-if="toggleUpdateCart">Xác nhận</span>
               </button>
             </div>
           </div>
           <div class="col-lg-6">
-            <div class="shoping__continue">
+            <!-- <div class="shoping__continue">
               <div class="shoping__discount">
                 <h5>Discount Codes</h5>
                 <form action="#">
@@ -311,22 +299,22 @@
                   <button type="submit" class="site-btn">APPLY COUPON</button>
                 </form>
               </div>
-            </div>
+            </div> -->
           </div>
           <div class="col-lg-6">
             <div class="shoping__checkout">
-              <h5>Cart Total</h5>
+              <h5>Chi tiết đơn hàng</h5>
               <ul>
                 <li>
-                  Subtotal <span>{{ formatPrice(this.subPrice) }}đ</span>
+                  Giá <span>{{ formatPrice(this.subPrice) }}đ</span>
                 </li>
                 <li>
-                  Total <span>{{ formatPrice(this.totalPrice) }}đ</span>
+                  Tổng giá <span>{{ formatPrice(this.totalPrice) }}đ</span>
                 </li>
               </ul>
-              <div style="cursor: pointer;" @click="proceedToCheckout()" class="primary-btn">
-                PROCEED TO CHECKOUT
-              </div>
+              <button style="cursor: pointer; border: none;" @click="proceedToCheckout()" class="primary-btn w-100" v-if="listCart && listCart.length > 0">
+                Tiến hành thanh toán
+              </button>
             </div>
           </div>
         </div>
@@ -452,14 +440,14 @@
 import { handleJQuery } from "../common/utils";
 import baseMixins from "../components/mixins/base";
 import { formatPriceSearchV2 } from "../common/common";
+import UserHeader from '../Layout/Components/UserHeader'
 export default {
   name: "ShoppingCart",
   mixins: [baseMixins],
+  components: {UserHeader},
   data() {
     return {
       listCart: [],
-      // totalPrice: 0,
-      // subPrice: 0,
       toggleUpdateCart: false,
       currentCart: null
     };
@@ -485,14 +473,6 @@ export default {
       const res = await this.getWithBigInt("/rest/carts");
       if (res && res.data && res.data.data) {
         this.listCart = res.data.data;
-        // this.listCart.forEach((element) => {
-        //   this.subPrice += element.product.sellPrice * element.quantity;
-        // });
-        // //chua coupon
-        // this.listCart.forEach((element) => {
-        //   this.totalPrice += element.product.sellPrice * element.quantity;
-        // });
-        console.log(this.listCart);
       }
     },
     async deleteCart() {
@@ -537,4 +517,11 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.custom-empty-content
+{
+  color: #b6b6b6;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+</style>

@@ -126,7 +126,7 @@
                       <a href="/shop-detail">Shop Details</a>
                     </li>
                     <li>
-                      <a href="/shopping-cart">Shopping Carts</a>
+                      <a href="/cart">Shopping Carts</a>
                     </li>
                     <li><a href="/check-out">Check Out</a></li>
                     <li>

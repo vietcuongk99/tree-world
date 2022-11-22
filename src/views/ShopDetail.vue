@@ -128,7 +128,7 @@
                       <a href="/shop-detail">Shop Details</a>
                     </li>
                     <li>
-                      <a href="/shopping-cart">Shopping Carts</a>
+                      <a href="/cart">Shopping Carts</a>
                     </li>
                     <li><a href="/check-out">Check Out</a></li>
                     <li>
@@ -647,7 +647,7 @@ export default {
   },
   methods: {
     formatPrice(price) {
-      if (!price) return "";
+      if (!price) return 0;
       return formatPriceSearchV2(price + "");
     },
     async getDetailProduct() {
@@ -679,7 +679,7 @@ export default {
       }
     },
     proceedToCheckout() {
-      this.$router.push({ path: `/shopping-cart` });
+      this.$router.push({ path: `/cart` });
     },
     navigateToNav(navSection) {
       this.currentNav = navSection

@@ -288,7 +288,7 @@ export default {
         },
         {
           key: "promotionCode",
-          label: "ID khuyến mại",
+          label: "Mã khuyến mại",
           visible: true,
           thStyle: { width: "8%" },
           thClass: "text-left align-middle",
