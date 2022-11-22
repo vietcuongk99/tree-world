@@ -8,7 +8,7 @@
     <div class="humberger__menu__overlay"></div>
     <div class="humberger__menu__wrapper">
       <div class="humberger__menu__logo">
-        <a href="#"><img src="img/logo.png" alt="" /></a>
+        <a href="#"><img src="img/logo.png" alt=""/></a>
       </div>
       <div class="humberger__menu__cart">
         <ul>
@@ -113,9 +113,7 @@
         <div class="row">
           <div class="col-lg-3">
             <div class="header__logo">
-              <a href="/"
-                ><img src="@/assets/img/logo.png" alt=""
-              /></a>
+              <a href="/"><img src="@/assets/img/logo.png" alt=""/></a>
             </div>
           </div>
           <div class="col-lg-6">
@@ -152,9 +150,9 @@
                   >
                 </li>
                 <li>
-                  <a href="#"
+                  <a href="/cart"
                     ><font-awesome-icon icon="fa fa-shopping-bag" />
-                    <span>3</span></a
+                    </a
                   >
                 </li>
               </ul>
@@ -223,16 +221,17 @@
     <!-- Hero Section End -->
 
     <!-- Breadcrumb Section Begin -->
+    <!-- <div></div> -->
     <section class="breadcrumb-section set-bg" data-setbg="img/breadcrumb.jpg">
       <div class="container">
         <div class="row">
           <div class="col-lg-12 text-center">
             <div class="breadcrumb__text">
-              <h2>Vegetable’s Package</h2>
+              <!-- <h2>Vegetable’s Package</h2> -->
               <div class="breadcrumb__option">
-                <a href="./">Home</a>
-                <a href="./">Vegetables</a>
-                <span>Vegetable’s Package</span>
+                <!-- <a href="./">Home</a>
+                <a href="./">Vegetables</a> -->
+                <span v-if="productDetail">{{ productDetail.productName }}</span>
               </div>
             </div>
           </div>
@@ -248,19 +247,23 @@
           <div class="col-lg-6 col-md-6">
             <div class="product__details__pic">
               <div class="product__details__pic__item">
-                <img
+                <img v-if="productDetail"
                   class="product__details__pic__item--large"
-                  src="img/product/details/product-details-1.jpg"
+                  :src="productDetail.mainImg"
                   alt=""
                 />
               </div>
-              <div class="product__details__pic__slider owl-carousel">
+              <div
+                v-for="item in listImg"
+                :key="item"
+                class="product__details__pic__slider owl-carousel"
+              >
                 <img
                   data-imgbigurl="img/product/details/product-details-2.jpg"
-                  src="img/product/details/thumb-1.jpg"
+                  :src="item[0]"
                   alt=""
                 />
-                <img
+                <!-- <img
                   data-imgbigurl="img/product/details/product-details-3.jpg"
                   src="img/product/details/thumb-2.jpg"
                   alt=""
@@ -274,54 +277,40 @@
                   data-imgbigurl="img/product/details/product-details-4.jpg"
                   src="img/product/details/thumb-4.jpg"
                   alt=""
-                />
+                /> -->
               </div>
             </div>
           </div>
-          <div class="col-lg-6 col-md-6">
+          <div class="col-lg-6 col-md-6" v-if="productDetail">
             <div class="product__details__text">
-              <h3>Vetgetable’s Package</h3>
+              <h3>{{ productDetail.productName }}</h3>
               <div class="product__details__rating">
+                <!-- <i class="fa fa-star"></i>
                 <i class="fa fa-star"></i>
                 <i class="fa fa-star"></i>
                 <i class="fa fa-star"></i>
-                <i class="fa fa-star"></i>
-                <i class="fa fa-star-half-o"></i>
-                <span>(18 reviews)</span>
+                <i class="fa fa-star-half-o"></i> -->
+                <!-- <span>(18 reviews)</span> -->
               </div>
-              <div class="product__details__price">$50.00</div>
+              <div class="product__details__price">
+                {{ formatPrice(productDetail.sellPrice) }}đ
+              </div>
               <p>
-                Mauris blandit aliquet elit, eget tincidunt nibh pulvinar a.
-                Vestibulum ac diam sit amet quam vehicula elementum sed sit amet
-                dui. Sed porttitor lectus nibh. Vestibulum ac diam sit amet quam
-                vehicula elementum sed sit amet dui. Proin eget tortor risus.
+                {{ productDetail.description }}
               </p>
               <div class="product__details__quantity">
                 <div class="quantity">
                   <div class="pro-qty">
-                    <input type="text" value="1" />
+                    <input type="number" v-model="quantity" />
                   </div>
                 </div>
               </div>
-              <a href="#" class="primary-btn">ADD TO CARD</a>
-              <a href="#" class="heart-icon"
-                ><span class="icon_heart_alt"></span
-              ></a>
+              <button style="border: none; cursor: pointer" @click="addToCart()" class="primary-btn" :disabled="!quantity || quantity <= 0"
+                >ADD TO CARD</button
+              >
               <ul>
-                <li><b>Availability</b> <span>In Stock</span></li>
                 <li>
-                  <b>Shipping</b>
-                  <span>01 day shipping. <samp>Free pickup today</samp></span>
-                </li>
-                <li><b>Weight</b> <span>0.5 kg</span></li>
-                <li>
-                  <b>Share on</b>
-                  <div class="share">
-                    <a href="#"><i class="fa fa-facebook"></i></a>
-                    <a href="#"><i class="fa fa-twitter"></i></a>
-                    <a href="#"><i class="fa fa-instagram"></i></a>
-                    <a href="#"><i class="fa fa-pinterest"></i></a>
-                  </div>
+                  <b>Availability</b> <span>{{ productDetail.amount }}</span>
                 </li>
               </ul>
             </div>
@@ -331,7 +320,7 @@
               <ul class="nav nav-tabs" role="tablist">
                 <li class="nav-item" @click="navigateToNav('description')">
                   <a
-                    :class="['nav-link', {'active': currentNav === 'description'}]"
+                  :class="['nav-link', {'active': currentNav === 'description'}]"
                     data-toggle="tab"
                     href="#tabs-1"
                     role="tab"
@@ -341,7 +330,7 @@
                 </li>
                 <li class="nav-item"  @click="navigateToNav('reviews')">
                   <a
-                    :class="['nav-link', {'active': currentNav === 'reviews'}]"
+                  :class="['nav-link', {'active': currentNav === 'reviews'}]"
                     data-toggle="tab"
                     href="#tabs-3"
                     role="tab"
@@ -399,23 +388,23 @@
                     </a-list>
                     <div>
                       <a-comment>
-                      <template #avatar>
-                        <a-avatar
-                          src="https://ps.w.org/simple-user-avatar/assets/icon-256x256.png?rev=2413146"
-                          alt="avatar"
-                        />
-                      </template>
-                      <template #content>
-                        <a-form-item>
-                          <a-textarea :rows="4" v-model="newReview" />
-                        </a-form-item>
-                        <a-form-item>
-                          <a-button type="" @click="createReview" style="background-color: #01904a; color: white">
-                            Đánh giá
-                          </a-button>
-                        </a-form-item>
-                      </template>
-                    </a-comment>
+                        <template #avatar>
+                          <a-avatar
+                            src="https://ps.w.org/simple-user-avatar/assets/icon-256x256.png?rev=2413146"
+                            alt="avatar"
+                          />
+                        </template>
+                        <template #content>
+                          <a-form-item>
+                            <a-textarea :rows="4" v-model="newReview" />
+                          </a-form-item>
+                          <a-form-item>
+                            <a-button type="" @click="createReview" style="background-color: #01904a; color: white">
+                              Đánh giá
+                            </a-button>
+                          </a-form-item>
+                        </template>
+                      </a-comment>
                     </div>
                   </div>
                 </div>
@@ -546,7 +535,7 @@
           <div class="col-lg-3 col-md-6 col-sm-6">
             <div class="footer__about">
               <div class="footer__about__logo">
-                <a href="./"><img src="img/logo.png" alt="" /></a>
+                <a href="./"><img src="img/logo.png" alt=""/></a>
               </div>
               <ul>
                 <li>Address: 60-49 Road 11378 New York</li>
@@ -601,8 +590,8 @@
               <div class="footer__copyright__text">
                 <p>
                   <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                  Copyright &copy; 2022
-                  All rights reserved | This template is made with
+                  Copyright &copy; 2022 All rights reserved | This template is
+                  made with
                   <i class="fa fa-heart" aria-hidden="true"></i> by
                   <a href="https://colorlib.com" target="_blank">Colorlib</a>
                   <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
@@ -621,25 +610,32 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters } from 'vuex';
 import { handleJQuery } from "@/common/utils";
+import baseMixins from "../components/mixins/base";
+import moment from 'moment-timezone';
+import { formatPriceSearchV2 } from "@/common/common";
 import { FETCH_REVIEWS, UPDATE_REVIEW, CREATE_REVIEW } from "@/store/action.type";
-import moment from 'moment-timezone'
-
 export default {
-  name: 'ShopDetail',
+  name: "ShopDetail",
+  mixins: [baseMixins],
+  props: {},
   data() {
     return {
+      productDetail: null,
+      listImg: [],
+      quantity: 1,
       currentProductId: null,
       currentUserId: null,
       currentNav: 'reviews',
       newReview: null,
       productReviews: [],
       userInfo: localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null
-    }
+    };
   },
   mounted() {
-    handleJQuery()
+    handleJQuery();
+    this.getDetailProduct();
     this.currentProductId = Number(this.$route.params.id)
     this.fetchReviews()
   },
@@ -650,6 +646,41 @@ export default {
     }
   },
   methods: {
+    formatPrice(price) {
+      if (!price) return "";
+      return formatPriceSearchV2(price + "");
+    },
+    async getDetailProduct() {
+      const id = this.$router.currentRoute.params.id;
+      const res = await this.getWithBigInt(`/rest/products`, id);
+      if (res && res.data && res.data.data) {
+        this.productDetail = res.data.data;
+      }
+    },
+    async addToCart() {
+      const userId = this.userInfo ? this.userInfo.userId : null
+      const productId = this.$router.currentRoute.params.id;
+
+      if (!userId || !productId) return
+      const res = await this.post(`/rest/carts`, {
+        userId,
+        productId,
+        quantity: this.quantity,
+      });
+
+      if (res && res.data && res.data.success) {
+        this.$message.closeAll()
+        this.$message({
+          message: 'Thêm sản phẩm vào giỏ hàng thành công',
+					type: "success",
+					showClose: true,
+        })
+        this.getDetailProduct();
+      }
+    },
+    proceedToCheckout() {
+      this.$router.push({ path: `/shopping-cart` });
+    },
     navigateToNav(navSection) {
       this.currentNav = navSection
     },
@@ -658,7 +689,6 @@ export default {
     },
     toggleUpdate(review) {
       review.toggleUpdate = !review.toggleUpdate
-
       if (!review.toggleUpdate) this.updateReview(review)
     },
     cancelUpdate(review) {
@@ -673,7 +703,6 @@ export default {
     },
     getReviewsByProduct(reviews) {
       this.productReviews = reviews.filter(item => item.productId && item.productId.productId === this.currentProductId)
-
       if (this.productReviews && this.productReviews.length > 0) {
         this.productReviews = this.productReviews.map(review => {
           return {
@@ -692,7 +721,6 @@ export default {
         date: moment(new Date()).format('YYYY-MM-DD'),
       }
       let res = await this.$store.dispatch(CREATE_REVIEW, payload)
-
       if (res.status === 200) {
         this.newReview = null
         this.$message.closeAll()
@@ -705,7 +733,6 @@ export default {
       }
     },
     async updateReview(review) {
-      
       if (!review.reviewDetail || review.reviewDetail.trim() === '') {
         review.toggleUpdate = true
         this.$message.closeAll()
@@ -716,7 +743,6 @@ export default {
         })
         return
       }
-
       let payload = {
         reviewId: review.review_id,
         reviewData: {
@@ -727,7 +753,6 @@ export default {
         }
       }
       let res = await this.$store.dispatch(UPDATE_REVIEW, payload)
-
       if (res.status === 200) {
         this.$message.closeAll()
         this.$message({
@@ -738,8 +763,8 @@ export default {
         this.fetchReviews()
       }
     }
-  }
-}
+  },
+};
 </script>
 
 <style scoped></style>

@@ -43,19 +43,13 @@ const router = new Router({
       component: () => import("@/views/ShopProduct"),
     },
     {
-      path: '/shop-detail',
-      name: 'ShopDetail',
-      meta: { title: 'Shop Detail', layout: 'userpages' },
-      component: () => import("@/views/ShopDetail"),
-    },
-    {
       path: '/shop-detail/:id',
       name: 'ShopDetail',
       meta: { title: 'Shop Detail', layout: 'userpages' },
       component: () => import("@/views/ShopDetail"),
     },
     {
-      path: '/shopping-cart',
+      path: '/cart',
       name: 'ShoppingCart',
       meta: { title: 'Shopping Cart', layout: 'userpages' },
       component: () => import("@/views/ShoppingCart"),
@@ -67,7 +61,7 @@ const router = new Router({
       component: () => import("@/views/Checkout"),
     },
     {
-      path: '/blog-detail',
+      path: '/blog-detail/:id',
       name: 'BlogDetail',
       meta: { title: 'BlogDetail', layout: 'userpages' },
       component: () => import("@/views/BlogDetail"),
@@ -160,7 +154,7 @@ const router = new Router({
       name: 'ErrorNotAllow',
       component: () => import("@/views/ErrorNotAllow"),
       meta: { title: 'Lỗi', layout: 'userpages' }
-    },
+    }
   ]
 });
 router.beforeEach((to, from, next) => {

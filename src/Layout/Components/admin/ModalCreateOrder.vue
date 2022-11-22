@@ -236,7 +236,6 @@ import {
   FETCH_ORDER_DETAIL_BY_ORDER_ID
 } from "@/store/action.type";
 import { CREATE_ORDER_DETAIL_BY_ORDER_ID } from '../../../store/action.type';
-
 const initOrder = {
   note: null,
   totalPrice: 0,
@@ -253,7 +252,6 @@ const initOrder = {
   orderStatus: { id: 1, statusName: "Chờ xác nhận" },
   user: null
 };
-
 const initOrderDetail = {
   order_detail_id: null,
   order: null,
@@ -262,9 +260,7 @@ const initOrderDetail = {
   productPrice: 0,
   quantity: 1
 }
-
 const validPhoneNumber = helpers.regex('validPhoneNumber', /^(0?)(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$/)
-
 export default {
   name: "ModalCreateOrder",
   components: { PageTitle, DatePicker },
@@ -346,7 +342,6 @@ export default {
     } else {
       this.getPromotionOptions(this.getPromotions)
     }
-
     if (!this.getProducts || this.getProducts.length === 0) {
       this.$store.dispatch(FETCH_PRODUCTS_AVAILABLE).then(res => {
         if (res && res.status === 200 && res.data) this.getProductOptions(res.data.data)
@@ -354,7 +349,6 @@ export default {
     } else {
       this.getProductOptions(this.getProducts)
     }
-
     this.$root.$on('bv::modal::show', (bvEvent, modalId) => {
       if(modalId === 'modal-create-order') this.fetchOrderDetailById()
     })
@@ -374,10 +368,8 @@ export default {
     checkInvalidProduct() {
       if (this.currentDetailData && this.currentDetailData.length > 0) {
         let incorrectDetail = this.currentDetailData.filter(item => !item.product || item.quantity < 0 || !item.quantity)
-
         return (incorrectDetail && incorrectDetail.length > 0)
       }
-
       return false
     },
     addNewProductForDetail() {
@@ -437,7 +429,6 @@ export default {
       if ((e.key < 48 || e.key > 57 || e.charCode === 13) && e.charCode !== 45 && e.charCode !== 32) {
         return true
       }
-
       e.preventDefault()
     },
     getPromotionOptions(promotions) {
@@ -478,7 +469,6 @@ export default {
         user,
         orderId
       } = { ...this.currentData };
-
       let payload = {
         orderId,
         orderData: {
@@ -492,7 +482,6 @@ export default {
           address, city, district, wards,
         },
       };
-
       let payloadForCreateDetail = this.currentDetailData.map(item => {
         return {
           productId: item.product ? item.product.value + '' : null,
@@ -501,7 +490,6 @@ export default {
           productPrice: (item.product && item.quantity ? item.product.sellPrice * item.quantity : 0) + '',
         }
       })
-
       let payloadForUpdateDetail = {
         orderId: orderId,
         orderDetailData: this.currentDetailData
@@ -527,7 +515,6 @@ export default {
             }
           })
       }
-
       if (this.isUpdate) {
         let promiseList = [this.$store.dispatch(UPDATE_ORDER, payload)]
         if (payloadForUpdateDetail.orderDetailData.length > 0) promiseList.push(this.$store.dispatch(UPDATE_ORDER_DETAIL_BY_ORDER_ID, payloadForUpdateDetail))
@@ -543,10 +530,8 @@ export default {
           }
         })
       }
-
       if (!this.isUpdate) {
         let res = await this.$store.dispatch(CREATE_ORDER, payload.orderData)
-
         if (res.status === 200 && res.data && res.data.data) {
           let newOrderId = res.data.data.orderId
           payloadForCreateDetail = payloadForCreateDetail.map(item => {
@@ -556,7 +541,6 @@ export default {
             }
           })
           let resForDetail = await this.$store.dispatch(CREATE_ORDER_DETAIL_BY_ORDER_ID, payloadForCreateDetail)
-
           if (resForDetail.status === 200) {
             this.$message({
               message: successMsg,
@@ -571,16 +555,12 @@ export default {
     handleSubmit() {
       this.$v.$reset();
       this.$v.$touch();
-
       if (this.$v.currentData.$invalid) {
         return;
       }
-
       let checkInvalidProduct = this.checkInvalidProduct()
-
       if (checkInvalidProduct) {
         this.$message.closeAll()
-
         this.$message({
           message: "Bạn cần điền đầy đủ thông tin sản phẩm.",
           type: "warning",
@@ -599,7 +579,6 @@ export default {
       //   this.currentData = Object.assign({}, initOrder)
       //   this.currentDetailData = []
       // }
-
       // this.$nextTick(() => {
       //   this.$v.$reset();
       // });
@@ -632,7 +611,6 @@ export default {
     async handleDeleteOrderDetail() {
       if (this.currentDetailId) {
         let res = await this.$store.dispatch(DELETE_ORDER_DETAIL, this.currentDetailId)
-
         if (res.status === 200) {
           this.cancelDeleteOrderDetail()
           this.currentDetailData = this.currentDetailData.filter(item => item.order_detail_id !== this.currentDetailId)
@@ -657,16 +635,13 @@ export default {
     min-height: 32px !important;
   }
 }
-
 .is-invalid-option {
   border-radius: 5px;
   border: 1px solid #ff7851 !important;
 }
-
 .custom-wrapper {
   overflow-wrap: break-word;
 }
-
 .custom-banner-image {
   background-repeat: no-repeat;
   background-position: center;
@@ -674,18 +649,15 @@ export default {
   box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(0, 0, 0, 0.2);
 }
-
 .banner-image__preview {
   width: 100%;
   height: 10rem;
-
   .overlay {
     width: 100%;
     height: 100%;
     display: none;
     background-color: rgba(0, 0, 0, 0.4);
   }
-
   &:hover .overlay {
     display: block;
     display: flex;
@@ -693,7 +665,6 @@ export default {
     cursor: pointer;
     transition-duration: 500ms;
   }
-
   .banner-image__btn {
     border: none;
     outline: none;
@@ -709,12 +680,10 @@ export default {
   
 <style lang="scss">
 #update-order {
-
   .was-validated .form-control:invalid,
   .form-control.is-invalid {
     background-image: none !important;
   }
-
   .invalid-date-feedback {
     display: none;
     width: 100%;
@@ -722,7 +691,6 @@ export default {
     font-size: 80%;
     color: #ff7851;
   }
-
   .invalid-editor-feedback {
     display: none;
     width: 100%;
@@ -730,13 +698,11 @@ export default {
     font-size: 80%;
     color: #ff7851;
   }
-
   .invalid-date {
     .invalid-date-feedback {
       display: block !important;
     }
   }
-
   .invalid-editor {
     .invalid-editor-feedback {
       display: block !important;

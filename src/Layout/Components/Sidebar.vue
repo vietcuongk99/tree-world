@@ -1,24 +1,21 @@
 <template>
-<div>
-  <div
+  <div>
+    <div
       class="app-sidebar sidebar-shadow"
       @mouseover="toggleSidebarHover('add', 'closed-sidebar-open')"
       @mouseleave="toggleSidebarHover('remove', 'closed-sidebar-open')"
-  >
-    <div class="app-header__logo">
-      <img
-          class="logo-header"
-          src="@/assets/static/images/logo.png"
-      />
-      <span class="title-logo">Tree World</span>
+    >
+      <div class="app-header__logo">
+        <img class="logo-header" src="@/assets/static/images/logo.png" />
+        <span class="title-logo">Tree World</span>
+      </div>
+      <div class="app-sidebar-content custom-box-shadow">
+        <VuePerfectScrollbar class="app-sidebar-scroll" v-once>
+          <SidebarV2 :menu="menu" :collapsed="collapsed" />
+        </VuePerfectScrollbar>
+      </div>
     </div>
-    <div class="app-sidebar-content custom-box-shadow">
-      <VuePerfectScrollbar class="app-sidebar-scroll" v-once>
-        <SidebarV2 :menu="menu" :collapsed="collapsed"/>
-      </VuePerfectScrollbar>
-    </div>
-  </div>
-  <div class="app-header__toggle" @click="toggleSidebar('closed-sidebar')">
+    <div class="app-header__toggle" @click="toggleSidebar('closed-sidebar')">
       <template v-if="!clickedToggleSidebar">
         <i class="fas fa-bars"></i>
       </template>
@@ -26,18 +23,16 @@
         <i class="fas fa-align-left"></i>
       </template>
     </div>
-</div>
+  </div>
 </template>
-
 <script>
 import VuePerfectScrollbar from "vue-perfect-scrollbar";
 import SidebarV2 from "./SidebarV2";
-import '@fortawesome/fontawesome-free/css/all.css'
-
+import "@fortawesome/fontawesome-free/css/all.css";
 export default {
   components: {
     VuePerfectScrollbar,
-    SidebarV2
+    SidebarV2,
   },
   data() {
     return {
@@ -46,7 +41,7 @@ export default {
       menu: [
         {
           title: "Sản phẩm",
-          icon: 'fas fa-tree',
+          icon: "fas fa-tree",
           child: [
             {
               href: "/admin/product-category",
@@ -64,7 +59,7 @@ export default {
         },
         {
           title: "Đơn hàng",
-          icon: 'fas fa-box-open',
+          icon: "fas fa-box-open",
           child: [
             {
               href: "/admin/order",
@@ -74,7 +69,7 @@ export default {
         },
         {
           title: "Bài đăng",
-          icon: 'fas fa-pencil-alt',
+          icon: "fas fa-pencil-alt",
           child: [
             {
               href: "/admin/post",
@@ -84,7 +79,7 @@ export default {
         },
         {
           title: "Quản trị",
-          icon: 'fa fa-user',
+          icon: "fa fa-user",
           child: [
             {
               href: "/admin/user",
@@ -94,10 +89,8 @@ export default {
         },
       ],
       collapsed: true,
-
       windowWidth: 0,
-
-      clickedToggleSidebar: false
+      clickedToggleSidebar: false,
     };
   },
   props: {
@@ -107,7 +100,6 @@ export default {
     toggleBodyClass(className) {
       const el = document.body;
       this.isOpen = !this.isOpen;
-
       if (this.isOpen) {
         el.classList.add(className);
       } else {
@@ -117,10 +109,8 @@ export default {
     toggleSidebar(className) {
       const el = document.body;
       this.sidebarActive = !this.sidebarActive;
-      this.clickedToggleSidebar = !this.clickedToggleSidebar
-
+      this.clickedToggleSidebar = !this.clickedToggleSidebar;
       this.windowWidth = document.documentElement.clientWidth;
-
       if (this.windowWidth > "992") {
         if (this.clickedToggleSidebar) {
           el.classList.add(className);
@@ -132,9 +122,7 @@ export default {
     toggleSidebarHover(add, className) {
       const el = document.body;
       this.sidebarActive = !this.sidebarActive;
-
       this.windowWidth = document.documentElement.clientWidth;
-
       if (this.windowWidth > "992") {
         if (add === "add") {
           el.classList.add(className);
@@ -145,48 +133,40 @@ export default {
     },
     getWindowWidth() {
       const el = document.body;
-
       this.windowWidth = document.documentElement.clientWidth;
-
       if (this.windowWidth < "1350") {
-        this.clickedToggleSidebar = true
+        this.clickedToggleSidebar = true;
         el.classList.add("closed-sidebar", "closed-sidebar-md");
       } else {
-        this.clickedToggleSidebar = false
+        this.clickedToggleSidebar = false;
         el.classList.remove("closed-sidebar", "closed-sidebar-md");
       }
     },
   },
   created() {
-    const userInfo = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null
-
+    const userInfo = localStorage.getItem("userInfo")
+      ? JSON.parse(localStorage.getItem("userInfo"))
+      : null;
     if (!userInfo) return;
-
-    if (userInfo.role === '[ADMIN]') return;
-
+    if (userInfo.role === "[ADMIN]") return;
     // userInfo.permissions = userInfo.permissions.replaceAll(' ', '').split(',')
-
     // this.menu.forEach((item) => {
     //   item.child = item.child.filter((child) => userInfo.permissions.includes(child.permission))
     // })
-
     // this.menu = this.menu.filter((item) => item.child.length > 0)
   },
   mounted() {
-    this.$nextTick(function () {
+    this.$nextTick(function() {
       window.addEventListener("resize", this.getWindowWidth);
-
       //Init
       this.getWindowWidth();
     });
   },
-
   beforeDestroy() {
     window.removeEventListener("resize", this.getWindowWidth);
   },
 };
 </script>
-
 <style lang="scss" scoped>
 .logo-header {
   margin-top: 1px;
@@ -195,9 +175,8 @@ export default {
   cursor: pointer;
 }
 </style>
-
 <style lang="scss">
-@import '../../assets/custom-menu-antd.scss';
+@import "../../assets/custom-menu-antd.scss";
 .logo-src {
   background: no-repeat;
 }
@@ -212,7 +191,7 @@ export default {
   width: auto;
   display: flex;
   align-items: center;
-  transition: width .2s;
+  transition: width 0.2s;
   flex-shrink: 0;
   position: fixed;
   top: 0;
@@ -220,7 +199,6 @@ export default {
   left: calc(300px);
   z-index: 10;
   cursor: pointer;
-
   i {
     color: #01904a;
     font-size: 1.5rem;

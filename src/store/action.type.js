@@ -52,6 +52,3 @@ export const FETCH_REVIEWS = 'fetchReviews'
 export const FETCH_REVIEW_BY_ID = 'fetchReviewById'
 export const CREATE_REVIEW = 'createReview'
 export const UPDATE_REVIEW = 'updateReview'
-
-
-

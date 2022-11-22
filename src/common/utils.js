@@ -139,6 +139,7 @@ export function performLogout() {
 export async function logout() {
   let token = StorageService.get("Token");
   if (token) {
+    // token = JSON.parse(token);
     StorageService.destroy("Token");
     StorageService.destroy("userInfo");
     router.push("/login").catch(() => {

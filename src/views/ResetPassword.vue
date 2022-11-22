@@ -61,7 +61,7 @@
 		</div>
 	</b-form>
 </template>
-    
+
 <script>
 import {
 	getAuthenticatedUser
@@ -74,18 +74,13 @@ import Configuration from "@/configuration";
 import baseMixins from "@/components/mixins/base";
 import { required, helpers } from "vuelidate/lib/validators";
 import { SEND_EMAIL_RESET_PASSWORD } from "../store/action.type";
-
 const API_ENDPOINT = Configuration.value("baseURL");
-
 const validEmail = helpers.regex('validEmail', /^\S+@\S+\.\S+$/)
-
 const initForm = {
 	username: null
 }
-
 const INPUT_USERNAME = 'input_username'
 const SEND_EMAIL_SUCCESS = 'send_email_success'
-
 export default {
 	data() {
 		return {
@@ -112,12 +107,10 @@ export default {
 		},
 	},
 	mounted() {
-
 	},
 	methods: {
 		handleCountdownProgress(data) {
 			if (data.seconds !== 1) return;
-
 			setTimeout(() => {
 				this.isFinishTimer = true;
 			}, 1000);
@@ -147,11 +140,9 @@ export default {
 		async sendEmailResetPassword() {
 			this.$v.$reset();
 			this.$v.$touch();
-
 			if (this.$v.form.$invalid) {
 				return;
 			}
-
 			this.loadingButton = true;
 			EventBus.$emit("send-progress", true);
 			let { username } = { ...this.form }
@@ -162,7 +153,6 @@ export default {
 				EventBus.$emit("close-progress", true);
 				this.loadingButton = false;
 			}
-
 			if (response && response.status === 200 && response.data.success) {
 				this.step = this.SEND_EMAIL_SUCCESS
 			} else {
@@ -179,63 +169,52 @@ export default {
 	},
 };
 </script>
-    
-    
+
+
 <style lang="scss" scoped>
 .button-login {
 	color: #fff;
 	background-color: #069255;
 	border-color: #069255;
 }
-
 @media only screen and (max-width: 1024px) {
 	.right-content {
 		display: none;
 	}
-
 	.brand-img {
 		width: 100px;
 	}
 }
-
 @media only screen and (max-width: 1366px) {
 	.brand-img {
 		width: 100px;
 	}
-
 	.modal-dialog {
 		margin: 0 auto;
 	}
-
 	.app-login-box h4 {
 		margin-bottom: 5px;
 	}
-
 	.input-otp {
 		height: 80px;
 	}
 }
-
 @media only screen and (max-width: 768px) {
 	.brand-img {
 		width: 100px;
 	}
 }
-
 .back-button {
 	position: absolute;
 	top: 30px;
 	left: 18px;
 }
-
 .back-icon {
 	font-weight: normal;
 	color: #069255;
 	cursor: pointer;
 }
-
 .input-otp {
 	height: 100px;
 }
 </style>
-    

@@ -9,7 +9,7 @@
     <div class="humberger__menu__overlay"></div>
     <div class="humberger__menu__wrapper">
       <div class="humberger__menu__logo">
-        <a href="#"><img src="img/logo.png" alt="" /></a>
+        <a href="#"><img src="img/logo.png" alt=""/></a>
       </div>
       <div class="humberger__menu__cart">
         <ul>
@@ -114,9 +114,7 @@
         <div class="row">
           <div class="col-lg-3">
             <div class="header__logo">
-              <a href="/"
-                ><img src="@/assets/img/logo.png" alt=""
-              /></a>
+              <a href="/"><img src="@/assets/img/logo.png" alt=""/></a>
             </div>
           </div>
           <div class="col-lg-6">
@@ -247,7 +245,7 @@
         <div class="row">
           <div class="col-lg-12">
             <div class="shoping__cart__table">
-              <table>
+              <table v-if="listCart && listCart.length > 0">
                 <thead>
                   <tr>
                     <th class="shoping__product">Products</th>
@@ -257,73 +255,51 @@
                     <th></th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody v-for="(item, index) in listCart" :key="index">
                   <tr>
                     <td class="shoping__cart__item">
-                      <img src="img/cart/cart-1.jpg" alt="" />
-                      <h5>Vegetable’s Package</h5>
+                      <img
+                        :src="item.product.mainImg"
+                        width="150"
+                        height="150"
+                        alt=""
+                      />
+                      <h5>{{ item.product.productName }}</h5>
                     </td>
-                    <td class="shoping__cart__price">$55.00</td>
+                    <td class="shoping__cart__price">
+                      {{ formatPrice(item.product.sellPrice) }}đ
+                    </td>
                     <td class="shoping__cart__quantity">
                       <div class="quantity">
                         <div class="pro-qty">
-                          <input type="text" value="1" />
+                          <input v-if="toggleUpdateCart" type="number" v-model="item.quantity" @input="onChangeQuantity($event.target.value, item)"/>
+                          <div class="h-100 my-2" v-else>{{item.quantity}}</div>
                         </div>
                       </div>
                     </td>
-                    <td class="shoping__cart__total">$110.00</td>
-                    <td class="shoping__cart__item__close">
-                      <span class="icon_close"></span>
+                    <td class="shoping__cart__total">
+                      {{ formatPrice(item.product.sellPrice * item.quantity) }}đ
                     </td>
-                  </tr>
-                  <tr>
-                    <td class="shoping__cart__item">
-                      <img src="img/cart/cart-2.jpg" alt="" />
-                      <h5>Fresh Garden Vegetable</h5>
-                    </td>
-                    <td class="shoping__cart__price">$39.00</td>
-                    <td class="shoping__cart__quantity">
-                      <div class="quantity">
-                        <div class="pro-qty">
-                          <input type="text" value="1" />
-                        </div>
-                      </div>
-                    </td>
-                    <td class="shoping__cart__total">$39.99</td>
-                    <td class="shoping__cart__item__close">
-                      <span class="icon_close"></span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="shoping__cart__item">
-                      <img src="img/cart/cart-3.jpg" alt="" />
-                      <h5>Organic Bananas</h5>
-                    </td>
-                    <td class="shoping__cart__price">$69.00</td>
-                    <td class="shoping__cart__quantity">
-                      <div class="quantity">
-                        <div class="pro-qty">
-                          <input type="text" value="1" />
-                        </div>
-                      </div>
-                    </td>
-                    <td class="shoping__cart__total">$69.99</td>
-                    <td class="shoping__cart__item__close">
-                      <span class="icon_close"></span>
+                    <td class="shoping__cart__item__close" v-if="toggleUpdateCart">
+                      <span class="icon_close" @click="openModalConfirmDeleteCart(item)">x</span>
                     </td>
                   </tr>
                 </tbody>
               </table>
+              <div class="d-flex justify-content-center" v-else>
+                Giỏ hàng trống!
+              </div>
             </div>
           </div>
         </div>
         <div class="row">
           <div class="col-lg-12">
             <div class="shoping__cart__btns">
-              <a href="#" class="primary-btn cart-btn">CONTINUE SHOPPING</a>
-              <a href="#" class="primary-btn cart-btn cart-btn-right"
-                ><span class="icon_loading"></span> Upadate Cart</a
-              >
+              <!-- <a href="/" class="primary-btn cart-btn">CONTINUE SHOPPING</a> -->
+              <button class="primary-btn cart-btn cart-btn-right" style="border: none; cursor: pointer" @click="confirmUpdateCart">
+                <span v-if="!toggleUpdateCart">Cập nhật</span>
+                <span v-if="toggleUpdateCart">Xác nhận</span>
+              </button>
             </div>
           </div>
           <div class="col-lg-6">
@@ -341,10 +317,16 @@
             <div class="shoping__checkout">
               <h5>Cart Total</h5>
               <ul>
-                <li>Subtotal <span>$454.98</span></li>
-                <li>Total <span>$454.98</span></li>
+                <li>
+                  Subtotal <span>{{ formatPrice(this.subPrice) }}đ</span>
+                </li>
+                <li>
+                  Total <span>{{ formatPrice(this.totalPrice) }}đ</span>
+                </li>
               </ul>
-              <a href="#" class="primary-btn">PROCEED TO CHECKOUT</a>
+              <div style="cursor: pointer;" @click="proceedToCheckout()" class="primary-btn">
+                PROCEED TO CHECKOUT
+              </div>
             </div>
           </div>
         </div>
@@ -359,7 +341,7 @@
           <div class="col-lg-3 col-md-6 col-sm-6">
             <div class="footer__about">
               <div class="footer__about__logo">
-                <a href="./"><img src="img/logo.png" alt="" /></a>
+                <a href="./"><img src="img/logo.png" alt=""/></a>
               </div>
               <ul>
                 <li>Address: 60-49 Road 11378 New York</li>
@@ -414,8 +396,8 @@
               <div class="footer__copyright__text">
                 <p>
                   <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                  Copyright &copy; 2022
-                  All rights reserved | This template is made with
+                  Copyright &copy; 2022 All rights reserved | This template is
+                  made with
                   <i class="fa fa-heart" aria-hidden="true"></i> by
                   <a href="https://colorlib.com" target="_blank">Colorlib</a>
                   <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
@@ -429,6 +411,37 @@
         </div>
       </div>
     </footer>
+    <b-modal
+      hide-footer
+      id="modal-delete-cart"
+      :title="'Xác nhận xoá sản phẩm khỏi giỏ hàng'"
+      :no-close-on-backdrop="true"
+    >
+      <div class="pb-3">
+        Bạn có muốn xoá sản phẩm
+        <span
+          class="font-weight-bold"
+          v-if="currentCart && currentCart.product"
+        >
+          {{ currentCart.product.productName }}</span
+        >
+        khỏi giỏ hàng không ?
+      </div>
+      <b-button
+        class="mr-2 btn-light2 pull-right"
+        @click="closeModalConfirmDeleteCart()"
+      >
+        Hủy
+      </b-button>
+      <b-button
+        variant="primary pull-right"
+        class="mr-2"
+        type="submit"
+        @click="deleteCart()"
+      >
+        Đồng ý
+      </b-button>
+    </b-modal>
     <!-- Footer Section End -->
 
     <!-- Js Plugins -->
@@ -436,13 +449,92 @@
 </template>
 
 <script>
-import { handleJQuery } from '../common/utils'
+import { handleJQuery } from "../common/utils";
+import baseMixins from "../components/mixins/base";
+import { formatPriceSearchV2 } from "../common/common";
 export default {
-  name: 'ShoppingCart',
-  created() {
-    handleJQuery()
-  }
-}
+  name: "ShoppingCart",
+  mixins: [baseMixins],
+  data() {
+    return {
+      listCart: [],
+      // totalPrice: 0,
+      // subPrice: 0,
+      toggleUpdateCart: false,
+      currentCart: null
+    };
+  },
+  mounted() {
+    handleJQuery();
+    this.getListCart();
+  },
+  computed: {
+    totalPrice() {
+      return this.listCart && this.listCart.length > 0
+        ? (this.listCart.map(cart => cart.quantity * cart.product.sellPrice).reduce((prev, current) => prev + current, 0))
+        : 0
+    },
+    subPrice() {
+      return this.listCart && this.listCart.length > 0
+        ? (this.listCart.map(cart => cart.quantity * cart.product.sellPrice).reduce((prev, current) => prev + current, 0))
+        : 0
+    },
+  },
+  methods: {
+    async getListCart() {
+      const res = await this.getWithBigInt("/rest/carts");
+      if (res && res.data && res.data.data) {
+        this.listCart = res.data.data;
+        // this.listCart.forEach((element) => {
+        //   this.subPrice += element.product.sellPrice * element.quantity;
+        // });
+        // //chua coupon
+        // this.listCart.forEach((element) => {
+        //   this.totalPrice += element.product.sellPrice * element.quantity;
+        // });
+        console.log(this.listCart);
+      }
+    },
+    async deleteCart() {
+      if (!this.currentCart || !this.currentCart.cartId) return
+      const res = await this.delete(`/rest/carts/${this.currentCart.cartId}`);
+      if (res && res.status === 200) {
+        this.$message.closeAll()
+        this.$message({
+          message: 'Xoá sản phẩm khỏi giỏ hàng thành công.',
+					type: "success",
+					showClose: true,
+        })
+        this.closeModalConfirmDeleteCart()
+        this.getListCart()
+      }
+    },
+    onChangeQuantity(quantity, cart) {
+      cart.quantity = quantity
+      this.$nextTick(() => {
+        
+      })
+    },
+    openModalConfirmDeleteCart(cart) {
+      this.currentCart = {...cart}
+      this.$root.$emit("bv::show::modal", "modal-delete-cart");
+    },
+    closeModalConfirmDeleteCart(cart) {
+      this.currentCart = null
+      this.$root.$emit("bv::hide::modal", "modal-delete-cart");
+    },
+    proceedToCheckout() {
+      this.$router.push({ path: `/checkout` });
+    },
+    formatPrice(price) {
+      if (!price) return 0;
+      return formatPriceSearchV2(price + "");
+    },
+    confirmUpdateCart() {
+      this.toggleUpdateCart = !this.toggleUpdateCart
+    }
+  },
+};
 </script>
 
 <style scoped></style>

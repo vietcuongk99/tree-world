@@ -90,12 +90,10 @@ import {EventBus} from "@/common/event-bus";
 import Configuration from "@/configuration";
 import baseMixins from "@/components/mixins/base";
 import { required, helpers } from "vuelidate/lib/validators";
-
 const API_ENDPOINT = Configuration.value("baseURL");
 import {
   LOGIN, REGISTER, CHANGE_PASSWORD, SEND_EMAIL_RESET_PASSWORD
 } from "@/store/action.type";
-
 export default {
   data() {
     return {
@@ -134,7 +132,6 @@ export default {
     StorageService.destroy("userInfo")
     setInterval(() => {
       if (this.step !== 2) return;
-
       if (this.durationOTP === 0) {
         this.isFinishTimerOTP = true;
         return;
@@ -145,7 +142,6 @@ export default {
   methods: {
     handleCountdownProgress(data) {
       if (data.seconds !== 1) return;
-
       setTimeout(() => {
         this.isFinishTimer = true;
       }, 1000);
@@ -190,11 +186,9 @@ export default {
     async login() {
       this.$v.$reset();
       this.$v.$touch();
-
       if (this.$v.form.$invalid) {
         return;
       }
-
       if ((this.form.username && this.form.username.trim() === '') || (this.form.password&& this.form.password.trim() === '')) {
         this.$message.closeAll()
         this.$message({
@@ -212,7 +206,6 @@ export default {
         EventBus.$emit("close-progress", true);
         this.loadingButton = false;
       }
-
       if (response && response.status === 200) {
         this.handleAfterLogin(response)
       } else {
@@ -248,17 +241,14 @@ export default {
   background-color: #069255;
   border-color: #069255;
 }
-
 @media only screen and (max-width: 1024px) {
   .right-content {
     display: none;
   }
-
   .brand-img {
     width: 100px;
   }
 }
-
 @media only screen and (max-width: 1366px) {
   .brand-img {
     width: 100px;
@@ -273,27 +263,22 @@ export default {
     height: 80px;
   }
 }
-
 @media only screen and (max-width: 768px) {
   .brand-img {
     width: 100px;
   }
 }
-
 .back-button {
   position: absolute;
   top: 30px;
   left: 18px;
 }
-
 .back-icon {
   font-weight: normal;
   color: #069255;
   cursor: pointer;
 }
-
 .input-otp {
   height: 100px;
 }
-
 </style>

@@ -103,19 +103,14 @@ import Configuration from "@/configuration";
 import baseMixins from "@/components/mixins/base";
 import { required, helpers } from "vuelidate/lib/validators";
 import { REGISTER } from '../store/action.type';
-
-
 const API_ENDPOINT = Configuration.value("baseURL");
-
 const validEmail = helpers.regex('validEmail', /^\S+@\S+\.\S+$/)
-
 const initForm = {
   username: null,
   password: null,
   rePassword: null,
   email: null,
 }
-
 export default {
   data() {
     return {
@@ -152,7 +147,6 @@ export default {
   methods: {
     handleCountdownProgress(data) {
       if (data.seconds !== 1) return;
-
       setTimeout(() => {
         this.isFinishTimer = true;
       }, 1000);
@@ -182,14 +176,12 @@ export default {
         username: this.form.username,
         password: this.form.password,
       })
-
       if (res && res.status === 200) {
         this.loadingButton = false;
         StorageService.save("Token", res.data.token);
         StorageService.save("userInfo", JSON.stringify(res.data));
         await getAuthenticatedUser(res.data);
         this.$message.closeAll();
-
         const isAdmin = StorageService.get("userInfo") && JSON.parse(StorageService.get("userInfo")).role === '[ADMIN]'
         // const savedPath = localStorage.getItem('savedPath');
         router.push(isAdmin ? '/admin' : "/")
@@ -205,11 +197,9 @@ export default {
     async register() {
       this.$v.$reset();
       this.$v.$touch();
-
       if (this.$v.form.$invalid) {
         return;
       }
-
       this.loadingButton = true;
       EventBus.$emit("send-progress", true);
       let {email, username, password} = {...this.form}
@@ -220,7 +210,6 @@ export default {
         EventBus.$emit("close-progress", true);
         this.loadingButton = false;
       }
-
       if (response && response.status === 200) {
         this.handleAfterRegister(response)
       } else {
@@ -245,55 +234,44 @@ export default {
   background-color: #069255;
   border-color: #069255;
 }
-
 @media only screen and (max-width: 1024px) {
   .right-content {
     display: none;
   }
-
   .brand-img {
     width: 100px;
   }
 }
-
 @media only screen and (max-width: 1366px) {
   .brand-img {
     width: 100px;
   }
-
   .modal-dialog {
     margin: 0 auto;
   }
-
   .app-login-box h4 {
     margin-bottom: 5px;
   }
-
   .input-otp {
     height: 80px;
   }
 }
-
 @media only screen and (max-width: 768px) {
   .brand-img {
     width: 100px;
   }
 }
-
 .back-button {
   position: absolute;
   top: 30px;
   left: 18px;
 }
-
 .back-icon {
   font-weight: normal;
   color: #069255;
   cursor: pointer;
 }
-
 .input-otp {
   height: 100px;
 }
 </style>
-  

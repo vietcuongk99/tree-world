@@ -6,7 +6,7 @@ import Configuration from "@/configuration";
 const API_ENDPOINT = Configuration.value("baseURL");
 import {
   LOGIN, REGISTER, CHANGE_PASSWORD, SEND_EMAIL_RESET_PASSWORD
-} from "@/store/action.type";
+} from "@/store/action.type"; 
 
 const state = {
   intervalName: "",
