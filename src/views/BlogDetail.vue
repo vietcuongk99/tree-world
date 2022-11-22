@@ -530,7 +530,6 @@ export default {
       if (res && res.data && res.data.data) {
         this.blogDetail = res.data.data;
         this.dateFormat = moment(res.data.data.date).format("ll");
-        console.log(this.blogDetail);
       }
     },
   },

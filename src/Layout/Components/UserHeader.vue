@@ -38,6 +38,9 @@
           </a-dropdown>
         </template>
         <template v-else>
+          <a href="/register" class="mr-2">
+            <font-awesome-icon icon="fa fa-user" /> Register
+          </a>
           <a href="/login">
             <font-awesome-icon icon="fa fa-user" /> Login
           </a>

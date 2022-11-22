@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import StorageService from '@/common/storage.service';
+import { verifyAccountRole } from './../common/utils';
 
 Vue.use(Router)
 const router = new Router({
@@ -161,11 +162,12 @@ router.beforeEach((to, from, next) => {
   if (to.path !== '/login') {
     localStorage.setItem('savedPath', to.fullPath)
   }
-  const publicPages = ['/login', '/config-api', '/register', '/reset-password'];
-  const authRequired = !publicPages.includes(to.path);
+  const publicPages = ['/', '/login', '/config-api', '/register', '/reset-password', '/shop-detail']
+  const publicNestedPages = ['/shop-detail']
+
+  const authRequired = !publicPages.includes(to.path) && (publicNestedPages.filter(path => to.path.includes(path)).length === 0)
   const isAdmin = StorageService.get("userInfo") && JSON.parse(StorageService.get("userInfo")).role === '[ADMIN]'
-  const isGuest = StorageService.get("userInfo") && JSON.parse(StorageService.get("userInfo")).role === '[GUEST]'
-  const isAuthenticated = !!StorageService.get("Token") || isGuest;
+  const isAuthenticated = !!StorageService.get("Token") || verifyAccountRole();
   if (to.path.includes('/admin') && isAuthenticated && !isAdmin) {
     next('/error-not-allow')
   }

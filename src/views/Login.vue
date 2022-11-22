@@ -12,7 +12,7 @@
               />
             </div>
             <h4 class="mt-2">
-              <span style="font-weight: 500">HỆ THỐNG QUẢN LÝ TREE WORLD</span>
+              <span style="font-weight: 500">TREE WORLD</span>
             </h4>
           </div>
           <div class="modal-dialog w-100 mx-auto">
@@ -56,10 +56,10 @@
                   >{{ step !== 1 ? 'Tiếp tục' : 'Đăng nhập' }}
                   </b-button>
                 </div>
-                <div class="w-100 p-2 text-center">
+                <!-- <div class="w-100 p-2 text-center">
                   <div @click="loginAsGuest" class="text-success" style="cursor: pointer">Đăng nhập với tài khoản khách</div>
-                </div>
-                <div class="w-100 mb-2 text-center">
+                </div> -->
+                <div class="w-100 my-2 text-center">
                   <div @click="navigate('/register')" class="text-success" style="cursor: pointer">Tạo tài khoản mới</div>
                 </div>
                 <div class="w-100 mb-2 text-center">

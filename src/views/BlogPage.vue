@@ -447,7 +447,6 @@ export default {
         this.listBlog = res.data.data;
         this.pagination.totalRows = res.data.data.length;
         this.listBlogPaginate = res.data.data.slice(0, this.pagination.perPage);
-        console.log(this.listBlog);
       }
     },
     showBlogDetail(id) {

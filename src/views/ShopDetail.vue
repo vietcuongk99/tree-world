@@ -254,8 +254,8 @@
                 />
               </div>
               <div
-                v-for="item in listImg"
-                :key="item"
+                v-for="(item, index) in listImg"
+                :key="index"
                 class="product__details__pic__slider owl-carousel"
               >
                 <img
@@ -386,7 +386,7 @@
                         </a-list-item>
                       </template>
                     </a-list>
-                    <div>
+                    <div v-if="verifyAccountRole">
                       <a-comment>
                         <template #avatar>
                           <a-avatar
@@ -611,7 +611,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import { handleJQuery } from "@/common/utils";
+import { handleJQuery, verifyAccountRole } from "@/common/utils";
 import baseMixins from "../components/mixins/base";
 import moment from 'moment-timezone';
 import { formatPriceSearchV2 } from "@/common/common";
@@ -643,6 +643,9 @@ export default {
     ...mapGetters(["getReviews"]),
     getTotalReview() {
       return this.productReviews ? this.productReviews.length : 0
+    },
+    verifyAccountRole() {
+      return verifyAccountRole()
     }
   },
   methods: {
@@ -658,6 +661,10 @@ export default {
       }
     },
     async addToCart() {
+      if (!this.verifyAccountRole) {
+        this.$router.push({ path: `/login` });
+        return
+      }
       const userId = this.userInfo ? this.userInfo.userId : null
       const productId = this.$router.currentRoute.params.id;
 

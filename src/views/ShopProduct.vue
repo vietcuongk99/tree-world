@@ -762,7 +762,6 @@ export default {
           0,
           this.pagination.perPage
         );
-        console.log(this.listProduct);
       }
     },
     onPageChanged(page) {
