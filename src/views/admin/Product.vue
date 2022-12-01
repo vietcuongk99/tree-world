@@ -54,7 +54,7 @@
                   <i class="fas fa-edit" style="font-size: 1.1rem"></i>
                 </a>
               </div>
-              <div class="px-3">
+              <div class="px-3" v-if="(row.item.productStatus === 1)">
                 <a href="javascript:void(0)" type="button" v-b-tooltip.hover title="Khoá sản phẩm"
                   @click.prevent="openModalDisableProduct(row.item)">
                   <i class="fas fa-times" style="font-size: 1.1rem; color: red"></i>
