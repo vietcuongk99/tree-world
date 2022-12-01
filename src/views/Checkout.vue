@@ -70,83 +70,7 @@
     <!-- Humberger End -->
 
     <!-- Header Section Begin -->
-    <header class="header">
-      <div class="header__top">
-        <div class="container">
-          <div class="row">
-            <div class="col-lg-6 col-md-6">
-              <div class="header__top__left">
-                <ul>
-                  <li>
-                    <font-awesome-icon icon="fa fa-envelope" />
-                    hello@colorlib.com
-                  </li>
-                  <li>Free Shipping for all Order of $99</li>
-                </ul>
-              </div>
-            </div>
-            <div class="col-lg-6 col-md-6">
-              <UserHeader />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-3">
-            <div class="header__logo">
-              <a href="/"><img src="@/assets/img/logo.png" alt=""/></a>
-            </div>
-          </div>
-          <div class="col-lg-6">
-            <nav class="header__menu">
-              <ul>
-                <li class="active"><a href="/">Home</a></li>
-                <li><a href="/shop-product">Shop </a></li>
-                <li>
-                  <a href="#">Pages</a>
-                  <ul class="header__menu__dropdown">
-                    <li>
-                      <a href="/shop-detail">Shop Details</a>
-                    </li>
-                    <li>
-                      <a href="/cart">Shopping Carts</a>
-                    </li>
-                    <li><a href="/check-out">Check Out</a></li>
-                    <li>
-                      <a href="/blog-detail">Blog Details</a>
-                    </li>
-                  </ul>
-                </li>
-                <li><a href="/blog">Blog</a></li>
-                <li><a href="/contact">Contact </a></li>
-              </ul>
-            </nav>
-          </div>
-          <div class="col-lg-3">
-            <div class="header__cart">
-              <ul>
-                <li>
-                  <a href="#"
-                    ><font-awesome-icon icon="fa fa-heart" /> <span>1</span></a
-                  >
-                </li>
-                <li>
-                  <a href="/cart"
-                    ><font-awesome-icon icon="fa fa-shopping-bag" />
-                    <span>3</span></a
-                  >
-                </li>
-              </ul>
-              <div class="header__cart__price">item: <span>$150.00</span></div>
-            </div>
-          </div>
-        </div>
-        <div class="humberger__open">
-          <font-awesome-icon icon="fa fa-bars" />
-        </div>
-      </div>
-    </header>
+    <UserHeader />
     <!-- Header Section End -->
 
     <!-- Hero Section Begin -->
@@ -212,63 +136,125 @@
           <h4>Thông tin đơn hàng</h4>
           <div class="row">
             <div class="col-lg-8 col-md-6">
-              <div class="checkout__input" :class="{
-                              'invalid-input': validationStatus($v.currentData.address),
-                            }">
+              <div
+                class="checkout__input"
+                :class="{
+                  'invalid-input': validationStatus($v.currentData.address),
+                }"
+              >
                 <p>Địa chỉ<span>*</span></p>
-                <input type="text" placeholder="Nhập địa chỉ" v-model.trim="$v.currentData.address.$model" :class="{
-                              'is-invalid': validationStatus($v.currentData.address),
-                            }" />
-                <div v-if="!$v.currentData.address.required" class="invalid-feedback">
+                <input
+                  type="text"
+                  placeholder="Nhập địa chỉ"
+                  v-model.trim="$v.currentData.address.$model"
+                  :class="{
+                    'is-invalid': validationStatus($v.currentData.address),
+                  }"
+                />
+                <div
+                  v-if="!$v.currentData.address.required"
+                  class="invalid-feedback"
+                >
                   Địa chỉ không được để trống.
                 </div>
               </div>
-              <div class="checkout__input" :class="{
-                              'invalid-input': validationStatus($v.currentData.city),
-                            }">
+              <div
+                class="checkout__input"
+                :class="{
+                  'invalid-input': validationStatus($v.currentData.city),
+                }"
+              >
                 <p>Thành phố<span>*</span></p>
-                <input type="text" placeholder="Nhập tên thành phố" v-model.trim="$v.currentData.city.$model" :class="{
-                              'is-invalid': validationStatus($v.currentData.city),
-                            }" />
-                <div v-if="!$v.currentData.city.required" class="invalid-feedback">
+                <input
+                  type="text"
+                  placeholder="Nhập tên thành phố"
+                  v-model.trim="$v.currentData.city.$model"
+                  :class="{
+                    'is-invalid': validationStatus($v.currentData.city),
+                  }"
+                />
+                <div
+                  v-if="!$v.currentData.city.required"
+                  class="invalid-feedback"
+                >
                   Thành phố không được để trống.
                 </div>
               </div>
-              <div class="checkout__input" :class="{
-                              'invalid-input': validationStatus($v.currentData.district),
-                            }">
+              <div
+                class="checkout__input"
+                :class="{
+                  'invalid-input': validationStatus($v.currentData.district),
+                }"
+              >
                 <p>Phường/xã/huyện<span>*</span></p>
-                <input type="text" placeholder="Nhập tên" v-model.trim="$v.currentData.district.$model" :class="{
-                              'is-invalid': validationStatus($v.currentData.district),
-                            }" />
-                <div v-if="!$v.currentData.district.required" class="invalid-feedback">
+                <input
+                  type="text"
+                  placeholder="Nhập tên"
+                  v-model.trim="$v.currentData.district.$model"
+                  :class="{
+                    'is-invalid': validationStatus($v.currentData.district),
+                  }"
+                />
+                <div
+                  v-if="!$v.currentData.district.required"
+                  class="invalid-feedback"
+                >
                   Phường/xã/huyện không được để trống.
                 </div>
               </div>
-              <div class="checkout__input" :class="{
-                              'invalid-input': validationStatus($v.currentData.wards),
-                            }">
+              <div
+                class="checkout__input"
+                :class="{
+                  'invalid-input': validationStatus($v.currentData.wards),
+                }"
+              >
                 <p>Quận/Thị trấn<span>*</span></p>
-                <input type="text" placeholder="Nhập tên" v-model.trim="$v.currentData.wards.$model" :class="{
-                              'is-invalid': validationStatus($v.currentData.wards),
-                            }" />
-                <div v-if="!$v.currentData.wards.required" class="invalid-feedback">
+                <input
+                  type="text"
+                  placeholder="Nhập tên"
+                  v-model.trim="$v.currentData.wards.$model"
+                  :class="{
+                    'is-invalid': validationStatus($v.currentData.wards),
+                  }"
+                />
+                <div
+                  v-if="!$v.currentData.wards.required"
+                  class="invalid-feedback"
+                >
                   Quận/Thị trấn không được để trống.
                 </div>
               </div>
               <div class="row">
                 <div class="col-lg-6">
-                  <div class="checkout__input" :class="{
-                              'invalid-input': validationStatus($v.currentData.phoneNumber),
-                            }">
+                  <div
+                    class="checkout__input"
+                    :class="{
+                      'invalid-input': validationStatus(
+                        $v.currentData.phoneNumber
+                      ),
+                    }"
+                  >
                     <p>Số điện thoại<span>*</span></p>
-                    <input type="number" placeholder="Nhập số điện thoại" v-model="$v.currentData.phoneNumber.$model" :class="{
-                                    'is-invalid': validationStatus($v.currentData.phoneNumber),
-                                  }" />
-                    <div v-if="!$v.currentData.phoneNumber.required" class="invalid-feedback">
+                    <input
+                      type="number"
+                      placeholder="Nhập số điện thoại"
+                      v-model="$v.currentData.phoneNumber.$model"
+                      :class="{
+                        'is-invalid': validationStatus(
+                          $v.currentData.phoneNumber
+                        ),
+                      }"
+                    />
+                    <div
+                      v-if="!$v.currentData.phoneNumber.required"
+                      class="invalid-feedback"
+                    >
                       Số điện thoại không được để trống.
                     </div>
-                    <div v-if="!$v.currentData.phoneNumber.validPhoneNumber" class="invalid-feedback">
+                    <div
+                      v-if="!$v.currentData.phoneNumber.validPhoneNumber"
+                      class="invalid-feedback"
+                    >
                       Số điện thoại không hợp lệ.
                     </div>
                   </div>
@@ -276,7 +262,11 @@
               </div>
               <div class="checkout__input">
                 <p>Ghi chú</p>
-                <input type="text" v-model="currentData.note" placeholder="Nhập ghi chú của bạn cho shop hoặc đơn vị vận chuyển." />
+                <input
+                  type="text"
+                  v-model="currentData.note"
+                  placeholder="Nhập ghi chú của bạn cho shop hoặc đơn vị vận chuyển."
+                />
               </div>
             </div>
             <div class="col-lg-4 col-md-6">
@@ -289,7 +279,9 @@
                   <li>
                     {{ item.product.productName }} x
                     {{ item.quantity }}
-                    <span>{{ formatPrice(item.product.sellPrice * item.quantity) }}</span>
+                    <span>{{
+                      formatPrice(item.product.sellPrice * item.quantity)
+                    }}</span>
                   </li>
                 </ul>
                 <div class="checkout__order__subtotal">
@@ -298,7 +290,13 @@
                 <div class="checkout__order__total">
                   Tổng giá đơn hàng <span>{{ formatPrice(totalPrice) }}đ</span>
                 </div>
-                <button class="site-btn" @click="handleSubmit" style="cursor:pointer">PLACE ORDER</button>
+                <button
+                  class="site-btn"
+                  @click="handleSubmit"
+                  style="cursor:pointer"
+                >
+                  PLACE ORDER
+                </button>
               </div>
             </div>
           </div>
@@ -391,14 +389,18 @@
 <script>
 import { handleJQuery } from "../common/utils";
 import baseMixins from "../components/mixins/base";
-import UserHeader from "../Layout/Components/UserHeader.vue"
 import { formatPriceSearchV2 } from "@/common/common";
-import { CREATE_ORDER, CREATE_ORDER_DETAIL, CREATE_ORDER_DETAIL_BY_ORDER_ID } from '@/store/action.type';
+import {
+  CREATE_ORDER,
+  CREATE_ORDER_DETAIL,
+  CREATE_ORDER_DETAIL_BY_ORDER_ID,
+} from "@/store/action.type";
 import { required, helpers } from "vuelidate/lib/validators";
+import UserHeader from "../Layout/Components/UserHeader";
 import moment from "moment";
 
-const DEFAULT_PROMOTION_ID = 3
-const ORDER_STATUS_ID = 1
+const DEFAULT_PROMOTION_ID = 3;
+const ORDER_STATUS_ID = 1;
 const initOrder = {
   totalPrice: 0,
   note: null,
@@ -417,14 +419,17 @@ const initOrderDetail = {
   product: null,
   productName: null,
   productPrice: 0,
-  quantity: 1
-}
-const validPhoneNumber = helpers.regex('validPhoneNumber', /^(0?)(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$/)
+  quantity: 1,
+};
+const validPhoneNumber = helpers.regex(
+  "validPhoneNumber",
+  /^(0?)(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$/
+);
 
 export default {
   name: "check-out",
   mixins: [baseMixins],
-  components: {UserHeader},
+  components: { UserHeader },
   data() {
     return {
       listCart: [],
@@ -448,7 +453,7 @@ export default {
       phoneNumber: {
         required,
         validPhoneNumber,
-      }
+      },
     },
   },
   mounted() {
@@ -458,13 +463,17 @@ export default {
   computed: {
     totalPrice() {
       return this.listCart && this.listCart.length > 0
-        ? (this.listCart.map(cart => cart.quantity * cart.product.sellPrice).reduce((prev, current) => prev + current, 0))
-        : 0
+        ? this.listCart
+            .map((cart) => cart.quantity * cart.product.sellPrice)
+            .reduce((prev, current) => prev + current, 0)
+        : 0;
     },
     subPrice() {
       return this.listCart && this.listCart.length > 0
-        ? (this.listCart.map(cart => cart.quantity * cart.product.sellPrice).reduce((prev, current) => prev + current, 0))
-        : 0
+        ? this.listCart
+            .map((cart) => cart.quantity * cart.product.sellPrice)
+            .reduce((prev, current) => prev + current, 0)
+        : 0;
     },
   },
   methods: {
@@ -479,8 +488,8 @@ export default {
       }
     },
     async handleCreateOrder() {
-      let successMsg = `Tạo đơn hàng thành công.`
-      let errorMsg = `Tạo đơn hàng không thành công.`
+      let successMsg = `Tạo đơn hàng thành công.`;
+      let errorMsg = `Tạo đơn hàng không thành công.`;
       let {
         note,
         address,
@@ -496,29 +505,38 @@ export default {
         promotionId,
         note: note ? note.trim() : null,
         orderStatusId,
-        date: moment(new Date()).format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
+        date: moment(new Date()).format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
         phoneNumber: phoneNumber && Number(phoneNumber),
-        address, city, district, wards,
-        }
-      let payloadForCreateDetail = this.listCart.map(item => {
+        address,
+        city,
+        district,
+        wards,
+      };
+      let payloadForCreateDetail = this.listCart.map((item) => {
         return {
-          productId: item.product ? item.product.productId + '' : null,
+          productId: item.product ? item.product.productId + "" : null,
           productName: item.product ? item.product.productName : null,
           quantity: item.quantity,
-          productPrice: (item.product && item.quantity ? item.product.sellPrice * item.quantity : 0) + '',
-        }
-      })
+          productPrice:
+            (item.product && item.quantity
+              ? item.product.sellPrice * item.quantity
+              : 0) + "",
+        };
+      });
 
-      let res = await this.$store.dispatch(CREATE_ORDER, payload)
+      let res = await this.$store.dispatch(CREATE_ORDER, payload);
       if (res.status === 200 && res.data && res.data.data) {
-        let newOrderId = res.data.data.orderId
-        payloadForCreateDetail = payloadForCreateDetail.map(item => {
+        let newOrderId = res.data.data.orderId;
+        payloadForCreateDetail = payloadForCreateDetail.map((item) => {
           return {
             ...item,
-            orderId: newOrderId
-          }
-        })
-        let resForDetail = await this.$store.dispatch(CREATE_ORDER_DETAIL_BY_ORDER_ID, payloadForCreateDetail)
+            orderId: newOrderId,
+          };
+        });
+        let resForDetail = await this.$store.dispatch(
+          CREATE_ORDER_DETAIL_BY_ORDER_ID,
+          payloadForCreateDetail
+        );
         if (resForDetail.status === 200) {
           this.$message({
             message: successMsg,
@@ -536,7 +554,7 @@ export default {
       }
       this.handleCreateOrder();
     },
-    validationStatus: function (validation) {
+    validationStatus: function(validation) {
       return typeof validation != "undefined" ? validation.$error : false;
     },
   },
@@ -554,7 +572,7 @@ export default {
   width: 100%;
   margin-top: 0.25rem;
   font-size: 80%;
-  color: #FF7851;
+  color: #ff7851;
 }
 
 .invalid-input .invalid-feedback {

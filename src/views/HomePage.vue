@@ -69,93 +69,7 @@
     </div>
     <!--    Humberger End-->
     <!--    Header Section Begin-->
-    <header class="header">
-      <div class="header__top">
-        <div class="container">
-          <div class="row">
-            <div class="col-lg-6 col-md-6">
-              <div class="header__top__left">
-                <ul>
-                  <li>
-                    <font-awesome-icon icon="fa fa-envelope" />
-                    hello@colorlib.com
-                  </li>
-                  <li>Free Shipping for all Order of $99</li>
-                </ul>
-              </div>
-            </div>
-            <div class="col-lg-6 col-md-6">
-              <UserHeader />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-3">
-            <div class="header__logo">
-              <a href="/"><img src="@/assets/img/logo.png" alt=""/></a>
-            </div>
-          </div>
-          <div class="col-lg-6">
-            <nav class="header__menu">
-              <ul>
-                <li class="active">
-                  <a href="/">Home</a>
-                </li>
-                <li>
-                  <a href="/shop-product">Shop </a>
-                </li>
-                <li>
-                  <a href="#">Pages</a>
-                  <ul class="header__menu__dropdown">
-                    <li>
-                      <a href="/shop-detail">Shop Details</a>
-                    </li>
-                    <li>
-                      <a href="/cart">Shopping Carts</a>
-                    </li>
-                    <li>
-                      <a href="/check-out">Check Out</a>
-                    </li>
-                    <li>
-                      <a href="/blog-detail">Blog Details</a>
-                    </li>
-                  </ul>
-                </li>
-                <li>
-                  <a href="/blog">Blog</a>
-                </li>
-                <li>
-                  <a href="/contact">Contact </a>
-                </li>
-              </ul>
-            </nav>
-          </div>
-          <div class="col-lg-3">
-            <div class="header__cart">
-              <ul>
-                <li>
-                  <a href="#">
-                    <font-awesome-icon icon="fa fa-heart" /> <span>1</span>
-                  </a>
-                </li>
-                <li>
-                  <a href="/cart">
-                    <font-awesome-icon icon="fa fa-shopping-bag" />
-                    <span>3</span>
-                  </a>
-                </li>
-              </ul>
-              <div class="header__cart__price">item: <span>$150.00</span></div>
-            </div>
-          </div>
-        </div>
-        <div class="humberger__open">
-          <font-awesome-icon icon="fa fa-bars" />
-        </div>
-      </div>
-    </header>
+    <UserHeader />
     <!-- Header Section End -->
 
     <!-- Hero Section Begin -->
@@ -319,7 +233,7 @@
         <div class="row">
           <div class="col-lg-4 col-md-6">
             <div class="latest-product__text">
-              <h4>Latest Products</h4>
+              <h4>Sản phẩm mới</h4>
               <div
                 v-for="(item, index) in topProduct"
                 :key="index"
@@ -331,8 +245,8 @@
                       <img :src="item.mainImg" alt="" />
                     </div>
                     <div class="latest-product__item__text">
-                      <h6>Crab Pool Security</h6>
-                      <span>$30.00</span>
+                      <h6>{{ item.productName }}</h6>
+                      <span>{{ formatPrice(item.sellPrice) }}đ</span>
                     </div>
                   </a>
                 </div>
@@ -341,63 +255,20 @@
           </div>
           <div class="col-lg-4 col-md-6">
             <div class="latest-product__text">
-              <h4>Top Rated Products</h4>
-              <div class="latest-product__slider owl-carousel">
+              <h4>Sản phẩm bán chạy</h4>
+              <div
+                v-for="(item, index) in rateProduct"
+                :key="index"
+                class="latest-product__slider owl-carousel"
+              >
                 <div class="latest-prdouct__slider__item">
                   <a href="#" class="latest-product__item">
                     <div class="latest-product__item__pic">
-                      <img src="img/latest-product/lp-1.jpg" alt="" />
+                      <img :src="item.mainImg" alt="" />
                     </div>
                     <div class="latest-product__item__text">
-                      <h6>Crab Pool Security</h6>
-                      <span>$30.00</span>
-                    </div>
-                  </a>
-                  <a href="#" class="latest-product__item">
-                    <div class="latest-product__item__pic">
-                      <img src="img/latest-product/lp-2.jpg" alt="" />
-                    </div>
-                    <div class="latest-product__item__text">
-                      <h6>Crab Pool Security</h6>
-                      <span>$30.00</span>
-                    </div>
-                  </a>
-                  <a href="#" class="latest-product__item">
-                    <div class="latest-product__item__pic">
-                      <img src="img/latest-product/lp-3.jpg" alt="" />
-                    </div>
-                    <div class="latest-product__item__text">
-                      <h6>Crab Pool Security</h6>
-                      <span>$30.00</span>
-                    </div>
-                  </a>
-                </div>
-                <div class="latest-prdouct__slider__item">
-                  <a href="#" class="latest-product__item">
-                    <div class="latest-product__item__pic">
-                      <img src="img/latest-product/lp-1.jpg" alt="" />
-                    </div>
-                    <div class="latest-product__item__text">
-                      <h6>Crab Pool Security</h6>
-                      <span>$30.00</span>
-                    </div>
-                  </a>
-                  <a href="#" class="latest-product__item">
-                    <div class="latest-product__item__pic">
-                      <img src="img/latest-product/lp-2.jpg" alt="" />
-                    </div>
-                    <div class="latest-product__item__text">
-                      <h6>Crab Pool Security</h6>
-                      <span>$30.00</span>
-                    </div>
-                  </a>
-                  <a href="#" class="latest-product__item">
-                    <div class="latest-product__item__pic">
-                      <img src="img/latest-product/lp-3.jpg" alt="" />
-                    </div>
-                    <div class="latest-product__item__text">
-                      <h6>Crab Pool Security</h6>
-                      <span>$30.00</span>
+                      <h6>{{ item.productName }}</h6>
+                      <span>{{ formatPrice(item.sellPrice) }}đ</span>
                     </div>
                   </a>
                 </div>
@@ -406,63 +277,20 @@
           </div>
           <div class="col-lg-4 col-md-6">
             <div class="latest-product__text">
-              <h4>Review Products</h4>
-              <div class="latest-product__slider owl-carousel">
+              <h4>Đánh giá cao</h4>
+              <div
+                v-for="(item, index) in reviewProduct"
+                :key="index"
+                class="latest-product__slider owl-carousel"
+              >
                 <div class="latest-prdouct__slider__item">
                   <a href="#" class="latest-product__item">
                     <div class="latest-product__item__pic">
-                      <img src="img/latest-product/lp-1.jpg" alt="" />
+                      <img :src="item.mainImg" alt="" />
                     </div>
                     <div class="latest-product__item__text">
-                      <h6>Crab Pool Security</h6>
-                      <span>$30.00</span>
-                    </div>
-                  </a>
-                  <a href="#" class="latest-product__item">
-                    <div class="latest-product__item__pic">
-                      <img src="img/latest-product/lp-2.jpg" alt="" />
-                    </div>
-                    <div class="latest-product__item__text">
-                      <h6>Crab Pool Security</h6>
-                      <span>$30.00</span>
-                    </div>
-                  </a>
-                  <a href="#" class="latest-product__item">
-                    <div class="latest-product__item__pic">
-                      <img src="img/latest-product/lp-3.jpg" alt="" />
-                    </div>
-                    <div class="latest-product__item__text">
-                      <h6>Crab Pool Security</h6>
-                      <span>$30.00</span>
-                    </div>
-                  </a>
-                </div>
-                <div class="latest-prdouct__slider__item">
-                  <a href="#" class="latest-product__item">
-                    <div class="latest-product__item__pic">
-                      <img src="img/latest-product/lp-1.jpg" alt="" />
-                    </div>
-                    <div class="latest-product__item__text">
-                      <h6>Crab Pool Security</h6>
-                      <span>$30.00</span>
-                    </div>
-                  </a>
-                  <a href="#" class="latest-product__item">
-                    <div class="latest-product__item__pic">
-                      <img src="img/latest-product/lp-2.jpg" alt="" />
-                    </div>
-                    <div class="latest-product__item__text">
-                      <h6>Crab Pool Security</h6>
-                      <span>$30.00</span>
-                    </div>
-                  </a>
-                  <a href="#" class="latest-product__item">
-                    <div class="latest-product__item__pic">
-                      <img src="img/latest-product/lp-3.jpg" alt="" />
-                    </div>
-                    <div class="latest-product__item__text">
-                      <h6>Crab Pool Security</h6>
-                      <span>$30.00</span>
+                      <h6>{{ item.productName }}</h6>
+                      <span>{{ formatPrice(item.sellPrice) }}đ</span>
                     </div>
                   </a>
                 </div>
@@ -609,14 +437,14 @@
 
 <script>
 import VueSlickCarousel from "vue-slick-carousel";
-import { handleJQuery } from "@/common/utils";
+import { handleJQuery, botChatAI } from "@/common/utils";
 import baseMixins from "../components/mixins/base";
 // import { handlebotfe } from "@/common/bot-fe";
 import { formatPriceSearchV2 } from "../common/common";
-import UserHeader from '../Layout/Components/UserHeader'
+import UserHeader from "../Layout/Components/UserHeader";
 export default {
   name: "HomePage",
-  components: { VueSlickCarousel, UserHeader},
+  components: { VueSlickCarousel, UserHeader },
   mixins: [baseMixins],
   data() {
     return {
@@ -625,6 +453,8 @@ export default {
       productListPaginate: [],
       listCategory: [],
       listPost: [],
+      rateProduct: [],
+      reviewProduct: [],
       listPostPaginate: [],
       pagination: {
         currentPostPage: 1,
@@ -717,6 +547,7 @@ export default {
   },
   mounted() {
     handleJQuery();
+    botChatAI();
     // handlebotfe();
     this.getListProduct();
     this.getListCategory();
@@ -734,6 +565,7 @@ export default {
           0,
           this.pagination.perPage
         );
+        this.rateProduct = res.data.data.slice(3, 9);
       }
     },
     async getTopProduct() {
@@ -741,6 +573,7 @@ export default {
       const res = await this.getWithBigInt("/rest/products/lastSixProducts");
       if (res && res.data && res.data.data) {
         this.topProduct = res.data.data;
+        this.reviewProduct = res.data.data.reverse();
       }
     },
     async getListCategory() {
@@ -771,7 +604,7 @@ export default {
       );
     },
     onPostPageChanged(page) {
-      this.pagination.currentPostPage= page;
+      this.pagination.currentPostPage = page;
       this.listPostPaginate = this.listPost.slice(
         (page - 1) * this.pagination.perPage,
         page * this.pagination.perPage

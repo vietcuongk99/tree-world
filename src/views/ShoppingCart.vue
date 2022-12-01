@@ -70,83 +70,7 @@
     <!-- Humberger End -->
 
     <!-- Header Section Begin -->
-    <header class="header">
-      <div class="header__top">
-        <div class="container">
-          <div class="row">
-            <div class="col-lg-6 col-md-6">
-              <div class="header__top__left">
-                <ul>
-                  <li>
-                    <font-awesome-icon icon="fa fa-envelope" />
-                    hello@colorlib.com
-                  </li>
-                  <li>Free Shipping for all Order of $99</li>
-                </ul>
-              </div>
-            </div>
-            <div class="col-lg-6 col-md-6">
-              <UserHeader />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-3">
-            <div class="header__logo">
-              <a href="/"><img src="@/assets/img/logo.png" alt=""/></a>
-            </div>
-          </div>
-          <div class="col-lg-6">
-            <nav class="header__menu">
-              <ul>
-                <li class="active"><a href="/">Home</a></li>
-                <li><a href="/shop-product">Shop </a></li>
-                <li>
-                  <a href="#">Pages</a>
-                  <ul class="header__menu__dropdown">
-                    <li>
-                      <a href="/shop-detail">Shop Details</a>
-                    </li>
-                    <li>
-                      <a href="/cart">Shopping Carts</a>
-                    </li>
-                    <li><a href="/check-out">Check Out</a></li>
-                    <li>
-                      <a href="/blog-detail">Blog Details</a>
-                    </li>
-                  </ul>
-                </li>
-                <li><a href="/blog">Blog</a></li>
-                <li><a href="/contact">Contact </a></li>
-              </ul>
-            </nav>
-          </div>
-          <div class="col-lg-3">
-            <div class="header__cart">
-              <ul>
-                <li>
-                  <a href="#"
-                    ><font-awesome-icon icon="fa fa-heart" /> <span>1</span></a
-                  >
-                </li>
-                <li>
-                  <a href="#"
-                    ><font-awesome-icon icon="fa fa-shopping-bag" />
-                    <span>3</span></a
-                  >
-                </li>
-              </ul>
-              <div class="header__cart__price">item: <span>$150.00</span></div>
-            </div>
-          </div>
-        </div>
-        <div class="humberger__open">
-          <font-awesome-icon icon="fa fa-bars" />
-        </div>
-      </div>
-    </header>
+    <UserHeader />
     <!-- Header Section End -->
 
     <!-- Hero Section Begin -->
@@ -253,23 +177,43 @@
                     <td class="shoping__cart__quantity">
                       <div class="quantity">
                         <div class="pro-qty">
-                          <input v-if="toggleUpdateCart" type="number" v-model="item.quantity" @input="onChangeQuantity($event.target.value, item)"/>
-                          <div class="h-100 my-2" v-else>{{item.quantity}}</div>
+                          <input
+                            v-if="toggleUpdateCart"
+                            type="number"
+                            v-model="item.quantity"
+                            @input="onChangeQuantity($event.target.value, item)"
+                          />
+                          <div class="h-100 my-2" v-else>
+                            {{ item.quantity }}
+                          </div>
                         </div>
                       </div>
                     </td>
                     <td class="shoping__cart__total">
                       {{ formatPrice(item.product.sellPrice * item.quantity) }}đ
                     </td>
-                    <td class="shoping__cart__item__close" v-if="toggleUpdateCart">
-                      <span class="icon_close" @click="openModalConfirmDeleteCart(item)">x</span>
+                    <td
+                      class="shoping__cart__item__close"
+                      v-if="toggleUpdateCart"
+                    >
+                      <span
+                        class="icon_close"
+                        @click="openModalConfirmDeleteCart(item)"
+                        >x</span
+                      >
                     </td>
                   </tr>
                 </tbody>
               </table>
-              <div class="d-flex justify-content-center flex-column align-items-center" v-else>
+              <div
+                class="d-flex justify-content-center flex-column align-items-center"
+                v-else
+              >
                 <div>
-                  <i class="fa-solid fa-bag-shopping" style="color: #b6b6b6; font-size: 2rem;"></i>
+                  <i
+                    class="fa-solid fa-bag-shopping"
+                    style="color: #b6b6b6; font-size: 2rem;"
+                  ></i>
                 </div>
                 <div class="custom-empty-content my-2">Giỏ hàng trống</div>
               </div>
@@ -279,8 +223,11 @@
         <div class="row">
           <div class="col-lg-12">
             <div class="shoping__cart__btns">
-              <a href="/" class="primary-btn cart-btn mx-0">Tiếp tục mua hàng</a>
-              <button v-if="listCart && listCart.length > 0"
+              <a href="/" class="primary-btn cart-btn mx-0"
+                >Tiếp tục mua hàng</a
+              >
+              <button
+                v-if="listCart && listCart.length > 0"
                 class="primary-btn cart-btn cart-btn-right"
                 style="border: none; cursor: pointer"
                 @click="confirmUpdateCart"
@@ -312,7 +259,12 @@
                   Tổng giá <span>{{ formatPrice(this.totalPrice) }}đ</span>
                 </li>
               </ul>
-              <button style="cursor: pointer; border: none;" @click="proceedToCheckout()" class="primary-btn w-100" v-if="listCart && listCart.length > 0">
+              <button
+                style="cursor: pointer; border: none;"
+                @click="proceedToCheckout()"
+                class="primary-btn w-100"
+                v-if="listCart && listCart.length > 0"
+              >
                 Tiến hành thanh toán
               </button>
             </div>
@@ -440,16 +392,16 @@
 import { handleJQuery } from "../common/utils";
 import baseMixins from "../components/mixins/base";
 import { formatPriceSearchV2 } from "../common/common";
-import UserHeader from '../Layout/Components/UserHeader'
+import UserHeader from "../Layout/Components/UserHeader";
 export default {
   name: "ShoppingCart",
   mixins: [baseMixins],
-  components: {UserHeader},
+  components: { UserHeader },
   data() {
     return {
       listCart: [],
       toggleUpdateCart: false,
-      currentCart: null
+      currentCart: null,
     };
   },
   mounted() {
@@ -459,13 +411,17 @@ export default {
   computed: {
     totalPrice() {
       return this.listCart && this.listCart.length > 0
-        ? (this.listCart.map(cart => cart.quantity * cart.product.sellPrice).reduce((prev, current) => prev + current, 0))
-        : 0
+        ? this.listCart
+            .map((cart) => cart.quantity * cart.product.sellPrice)
+            .reduce((prev, current) => prev + current, 0)
+        : 0;
     },
     subPrice() {
       return this.listCart && this.listCart.length > 0
-        ? (this.listCart.map(cart => cart.quantity * cart.product.sellPrice).reduce((prev, current) => prev + current, 0))
-        : 0
+        ? this.listCart
+            .map((cart) => cart.quantity * cart.product.sellPrice)
+            .reduce((prev, current) => prev + current, 0)
+        : 0;
     },
   },
   methods: {
@@ -476,31 +432,29 @@ export default {
       }
     },
     async deleteCart() {
-      if (!this.currentCart || !this.currentCart.cartId) return
+      if (!this.currentCart || !this.currentCart.cartId) return;
       const res = await this.delete(`/rest/carts/${this.currentCart.cartId}`);
       if (res && res.status === 200) {
-        this.$message.closeAll()
+        this.$message.closeAll();
         this.$message({
-          message: 'Xoá sản phẩm khỏi giỏ hàng thành công.',
-					type: "success",
-					showClose: true,
-        })
-        this.closeModalConfirmDeleteCart()
-        this.getListCart()
+          message: "Xoá sản phẩm khỏi giỏ hàng thành công.",
+          type: "success",
+          showClose: true,
+        });
+        this.closeModalConfirmDeleteCart();
+        this.getListCart();
       }
     },
     onChangeQuantity(quantity, cart) {
-      cart.quantity = quantity
-      this.$nextTick(() => {
-        
-      })
+      cart.quantity = quantity;
+      this.$nextTick(() => {});
     },
     openModalConfirmDeleteCart(cart) {
-      this.currentCart = {...cart}
+      this.currentCart = { ...cart };
       this.$root.$emit("bv::show::modal", "modal-delete-cart");
     },
     closeModalConfirmDeleteCart(cart) {
-      this.currentCart = null
+      this.currentCart = null;
       this.$root.$emit("bv::hide::modal", "modal-delete-cart");
     },
     proceedToCheckout() {
@@ -511,15 +465,14 @@ export default {
       return formatPriceSearchV2(price + "");
     },
     confirmUpdateCart() {
-      this.toggleUpdateCart = !this.toggleUpdateCart
-    }
+      this.toggleUpdateCart = !this.toggleUpdateCart;
+    },
   },
 };
 </script>
 
 <style scoped>
-.custom-empty-content
-{
+.custom-empty-content {
   color: #b6b6b6;
   font-size: 1.1rem;
   font-weight: 700;
