@@ -21,16 +21,16 @@
     <section class="breadcrumb-section set-bg" data-setbg="img/breadcrumb.jpg">
       <div class="container">
         <!-- <div class="row">
-          <div class="col-lg-12 text-center">
-            <div class="breadcrumb__text">
-              <h2>Shopping Cart</h2>
-              <div class="breadcrumb__option">
-                <a href="./">Home</a>
-                <span>Shopping Cart</span>
+            <div class="col-lg-12 text-center">
+              <div class="breadcrumb__text">
+                <h2>Shopping Cart</h2>
+                <div class="breadcrumb__option">
+                  <a href="./">Home</a>
+                  <span>Shopping Cart</span>
+                </div>
               </div>
             </div>
-          </div>
-        </div> -->
+          </div> -->
       </div>
     </section>
     <!-- Breadcrumb Section End -->
@@ -41,73 +41,44 @@
         <div class="row">
           <div class="col-lg-12">
             <div class="shoping__cart__table">
-              <table v-if="listCart && listCart.length > 0">
+              <table>
                 <thead>
                   <tr>
-                    <th class="shoping__product">Products</th>
-                    <th>Price</th>
-                    <th>Quantity</th>
-                    <th>Total</th>
-                    <th></th>
+                    <th class="shoping__product">Mã đơn hàng</th>
+                    <th>Địa chỉ</th>
+                    <th>Số điện thoại</th>
+                    <th>Trạng thái đơn hàng</th>
+                    <th>Tổng giá</th>
+                    <th>Thông tin đơn</th>
                   </tr>
                 </thead>
-                <tbody v-for="(item, index) in listCart" :key="index">
+                <tbody v-for="(item, index) in listOrder" :key="index">
                   <tr>
                     <td class="shoping__cart__item">
-                      <img
-                        :src="item.product.mainImg"
-                        width="150"
-                        height="150"
-                        alt=""
-                      />
-                      <h5>{{ item.product.productName }}</h5>
+                      <h5>{{ item.orderId }}</h5>
                     </td>
-                    <td class="shoping__cart__price">
-                      {{ formatPrice(item.product.sellPrice) }}đ
+                    <td class="shoping__cart__item">
+                      {{ item.address }}
                     </td>
-                    <td class="shoping__cart__quantity">
-                      <div class="quantity">
-                        <div class="pro-qty">
-                          <input
-                            v-if="toggleUpdateCart"
-                            type="number"
-                            v-model="item.quantity"
-                            @input="onChangeQuantity($event.target.value, item)"
-                          />
-                          <div class="my-2" v-else>
-                            {{ item.quantity }}
-                          </div>
-                        </div>
-                      </div>
+                    <td class="shoping__cart__item">
+                      {{ item.phoneNumber }}
+                    </td>
+                    <td class="shoping__cart__item">
+                      {{ item.orderStatus.statusName }}
                     </td>
                     <td class="shoping__cart__total">
-                      {{ formatPrice(item.product.sellPrice * item.quantity) }}đ
+                      {{ formatPrice(item.totalPrice) }}đ
                     </td>
-                    <td
-                      class="shoping__cart__item__close"
-                      v-if="toggleUpdateCart"
-                    >
+                    <td class="shoping__cart__item__close">
                       <span
                         class="icon_close"
-                        @click="openModalConfirmDeleteCart(item)"
+                        @click="openModalOrderDetail(item)"
                         >x</span
                       >
                     </td>
                   </tr>
                 </tbody>
               </table>
-              <div
-                class="d-flex justify-content-center flex-column align-items-center"
-                v-else
-              >
-                <div>
-                  <i
-                    class="fa-solid fa-bag-shopping"
-                    style="color: #b6b6b6; font-size: 2rem;"
-                  ></i>
-                </div>
-                <div class="custom-empty-content my-2">Giỏ hàng trống</div>
-              </div>
             </div>
           </div>
         </div>
@@ -167,39 +138,8 @@
 
     <!-- Footer Section Begin -->
     <UserFooter />
-    <b-modal
-      hide-footer
-      id="modal-delete-cart"
-      :title="'Xác nhận xoá sản phẩm khỏi giỏ hàng'"
-      :no-close-on-backdrop="true"
-    >
-      <div class="pb-3">
-        Bạn có muốn xoá sản phẩm
-        <span
-          class="font-weight-bold"
-          v-if="currentCart && currentCart.product"
-        >
-          {{ currentCart.product.productName }}</span
-        >
-        khỏi giỏ hàng không ?
-      </div>
-      <b-button
-        class="mr-2 btn-light2 pull-right"
-        @click="closeModalConfirmDeleteCart()"
-      >
-        Hủy
-      </b-button>
-      <b-button
-        variant="primary pull-right"
-        class="mr-2"
-        type="submit"
-        @click="deleteCart()"
-      >
-        Đồng ý
-      </b-button>
-    </b-modal>
+    <ModalOrderDetail :current-order-detail="currentOrderDetail" />
     <!-- Footer Section End -->
-
     <!-- Js Plugins -->
   </div>
 </template>
@@ -212,20 +152,31 @@ import UserHeader from "../Layout/Components/UserHeader";
 import UserFooter from "../Layout/Components/UserFooter";
 import Humberger from "../Layout/Components/Humberger";
 import SectionBegin from "../Layout/Components/SectionBegin";
+import ModalOrderDetail from "../Layout/Components/ModalOrderDetail.vue";
 export default {
   name: "MyOrder",
   mixins: [baseMixins],
-  components: { UserHeader, UserFooter, Humberger, SectionBegin },
+  components: {
+    UserHeader,
+    ModalOrderDetail,
+    SectionBegin,
+    Humberger,
+    UserFooter,
+  },
   data() {
     return {
       listCart: [],
       toggleUpdateCart: false,
       currentCart: null,
+      listOrder: null,
+      currentOrder: null,
+      currentOrderDetail: null,
     };
   },
   mounted() {
     handleJQuery();
     this.getListCart();
+    this.getListOrder();
   },
   computed: {
     totalPrice() {
@@ -250,6 +201,13 @@ export default {
         this.listCart = res.data.data;
       }
     },
+    async getListOrder() {
+      const res = await this.getWithBigInt("/rest/orders/orderUser");
+      if (res && res.data && res.data.data) {
+        this.listOrder = res.data.data;
+      }
+      console.log(this.listOrder);
+    },
     async deleteCart() {
       if (!this.currentCart || !this.currentCart.cartId) return;
       const res = await this.delete(`/rest/carts/${this.currentCart.cartId}`);
@@ -268,9 +226,17 @@ export default {
       cart.quantity = quantity;
       this.$nextTick(() => {});
     },
-    openModalConfirmDeleteCart(cart) {
-      this.currentCart = { ...cart };
-      this.$root.$emit("bv::show::modal", "modal-delete-cart");
+    async openModalOrderDetail(order) {
+      this.currentOrder = { ...order };
+      const res = await this.getWithBigInt(
+        "/rest/orderDetails/order",
+        order.orderId
+      );
+      if (res && res.data && res.data.data) {
+        this.currentOrderDetail = res.data.data;
+        this.$root.$emit("bv::show::modal", "modal-order-detail");
+        console.log(res);
+      }
     },
     closeModalConfirmDeleteCart(cart) {
       this.currentCart = null;

@@ -110,7 +110,6 @@ const initDataFilter = {
   page: 1,
   limit: 10
 };
-
 export default {
   name: "ProductManagement",
   data() {
@@ -189,7 +188,6 @@ export default {
           if (this.loadingHeader) this.loadingHeader = !this.loadingHeader
         }, 200)
       }
-
       if (response && response.data) this.$store.commit("setProducts", response.data.data);
     },
     navigateToUpdateProduct(product) {
@@ -238,6 +236,4 @@ export default {
 </script>
     
 <style scoped>
-
 </style>
-    

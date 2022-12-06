@@ -8,9 +8,9 @@
               <ul>
                 <li>
                   <font-awesome-icon icon="fa fa-envelope" />
-                  hello@colorlib.com
+                  treeworld@gmail.com
                 </li>
-                <li>Free Shipping for all Order of $99</li>
+                <li>Giao hàng tận nơi</li>
               </ul>
             </div>
           </div>
@@ -68,7 +68,46 @@
                 id="update-password"
                 :title="'Cập nhật mật khẩu'"
                 :no-close-on-backdrop="true"
+                @hide="cancelUpdatePassword()"
               >
+                <b-form-group id="exampleInputGroup4" label-for="exampleInput4">
+                  <b-form-input
+                    id="exampleInput4"
+                    v-model="form.oldPassword"
+                    type="password"
+                    required
+                    placeholder="Nhập lại mật khẩu cũ"
+                    :class="{
+                      'is-invalid':
+                        ($v.form.password.required &&
+                          (!form.oldPassword ||
+                            form.oldPassword.trim() === '')) ||
+                        ($v.form.password.required &&
+                          form.oldPassword &&
+                          form.oldPassword.trim() !== form.password.trim()),
+                    }"
+                  >
+                  </b-form-input>
+                  <div
+                    v-if="
+                      $v.form.password.required &&
+                        (!form.oldPassword || form.oldPassword.trim() === '')
+                    "
+                    class="invalid-feedback"
+                  >
+                    Mật khẩu không được để trống.
+                  </div>
+                  <div
+                    v-if="
+                      $v.form.password.required &&
+                        form.rePassword &&
+                        form.rePassword.trim() !== form.password.trim()
+                    "
+                    class="invalid-feedback"
+                  >
+                    Mật khẩu nhập lại không trùng khớp.
+                  </div>
+                </b-form-group>
                 <b-form-group id="exampleInputGroup2" label-for="exampleInput2">
                   <b-form-input
                     id="exampleInput2"
@@ -86,6 +125,12 @@
                     class="invalid-feedback"
                   >
                     Mật khẩu không được để trống.
+                  </div>
+                  <div
+                    v-if="$v.form.password == form.oldPassword"
+                    class="invalid-feedback"
+                  >
+                    Mật khẩu không được trùng với mật khẩu cũ.
                   </div>
                   <div
                     v-if="!$v.form.password.minLength"
@@ -157,7 +202,7 @@
       <div class="row">
         <div class="col-lg-3">
           <div class="header__logo">
-            <a href="/"><img src="@/assets/img/logo.png" alt=""/></a>
+            <a href="/"><img src="@/assets/static/images/logo.png" alt=""/></a>
           </div>
         </div>
         <div class="col-lg-6">
@@ -176,7 +221,7 @@
                     <a href="/cart">Giỏ hàng</a>
                   </li>
                   <li>
-                    <a href="/cart">Đơn hàng của tôi</a>
+                    <a href="/my-order">Đơn hàng của tôi</a>
                   </li>
                   <li>
                     <a href="/contact">Liên hệ </a>
@@ -192,19 +237,19 @@
         <div class="col-lg-3">
           <div class="header__cart">
             <ul>
-              <li>
-                <a href="#">
-                  <font-awesome-icon icon="fa fa-heart" /> <span>1</span>
-                </a>
-              </li>
+              <!-- <li>
+                  <a href="#">
+                    <font-awesome-icon icon="fa fa-heart" /> <span>1</span>
+                  </a>
+                </li> -->
               <li>
                 <a href="/cart">
                   <font-awesome-icon icon="fa fa-shopping-bag" />
-                  <span>3</span>
+                  <!-- <span>3</span> -->
                 </a>
               </li>
             </ul>
-            <div class="header__cart__price">item: <span>$150.00</span></div>
+            <!-- <div class="header__cart__price">item: <span>$150.00</span></div> -->
           </div>
         </div>
       </div>
@@ -266,6 +311,9 @@ export default {
     },
     cancelUpdatePassword() {
       this.$root.$emit("bv::hide::modal", "update-password");
+      this.form.password = "";
+      this.form.oldPassword = "";
+      this.form.rePassword = "";
     },
     async handleUpdatePassword() {
       if (!this.userInfo || !this.userInfo.username) {
