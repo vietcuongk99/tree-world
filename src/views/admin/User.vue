@@ -57,15 +57,23 @@
             <template #cell(key)="row">
               {{ dataFilter.limit * (dataFilter.page - 1) + row.index + 1 }}
             </template>
+            <template #cell(status)="row" style="text-align: center">
+              <b-badge class="badge-active" v-if="row.item.status">
+                Hoạt động
+              </b-badge>
+              <b-badge class="badge-inactive" v-if="!row.item.status">
+                Không hoạt động
+              </b-badge>
+            </template>
             <template #cell(actions)="row">
               <div class="d-flex justify-content-center">
-                <div class="px-3">
+                <!-- <div class="px-3">
                   <a href="javascript:void(0)" type="button" v-b-tooltip.hover title="Cập nhật"
                     @click.prevent="handleOpenModalUpdateUser(row.item, true)">
                     <i class="fas fa-user-edit" style="font-size: 1.1rem"></i>
                   </a>
-                </div>
-                <div class="px-3">
+                </div> -->
+                <div class="px-3" v-if="row.item.status">
                   <a href="javascript:void(0)" type="button" v-b-tooltip.hover title="Vô hiệu tài khoản"
                     @click.prevent="handleOpenModalDeleteUser(row.item)">
                     <i class="fas fa-user-times" style="font-size: 1.1rem; color: red"></i>
@@ -132,8 +140,26 @@
           </div>
         </b-form-group>
         <b-form-group>
-          <label>Email:</label>
-          <b-form-input id="input-email" v-model="currentData.email" placeholder="Nhập email" type="text"></b-form-input>
+          <label>Email:<span class="text-danger">*</span>:</label>
+          <b-form-input
+            id="input-email"
+            v-model.trim="$v.currentData.email.$model"
+            placeholder="Nhập mật khẩu"
+            type="text"
+            :class="{ 'is-invalid': validationStatus($v.currentData.email) }"
+          ></b-form-input>
+          <div
+            v-if="!$v.currentData.email.required"
+            class="invalid-feedback"
+          >
+            Địa chỉ email không được để trống.
+          </div>
+          <div
+            v-if="!$v.currentData.email.validEmail"
+            class="invalid-feedback"
+          >
+            Địa chỉ email không hợp lệ.
+          </div>
         </b-form-group>
         <template #modal-footer>
           <b-button class="mr-2 btn-light2 pull-right" @click="handleCancelUpdateUser">
@@ -162,7 +188,7 @@
   <script>
   import PageTitle from "../../Layout/Components/PageTitle";
   import baseMixins from "../../components/mixins/base";
-  import { required } from "vuelidate/lib/validators";
+  import { required, helpers } from "vuelidate/lib/validators";
   import { mapGetters } from "vuex";
   import router from '@/router';
   import { FETCH_USERS, FETCH_USER_BY_USERNAME, FETCH_USER_BY_ID, UPDATE_USER, CREATE_USER, DISABLE_USER, CHANGE_PASSWORD } from "@/store/action.type";
@@ -183,6 +209,8 @@
   };
 
   const PASSWORD_LENGTH = 8
+
+  const validEmail = helpers.regex('validEmail', /^\S+@\S+\.\S+$/)
   
   export default {
     name: "UserManagement",
@@ -204,6 +232,7 @@
           { key: "key", label: "STT", tdClass: 'align-middle', thClass: 'align-middle', visible: true, thStyle: { width: '4%' } },
           { key: "username", label: "Tên tài khoản", visible: true, thStyle: { width: '8%' }, thClass: 'text-left align-middle' },
           { key: "email", label: "Email", visible: true, thStyle: { width: '8%' }, thClass: 'text-left align-middle' },
+          { key: "status", label: "Trạng thái tài khoản", visible: true, thStyle: { width: '8%' }, thClass: 'text-center align-middle', tdClass: 'text-center align-middle' },
           {
             key: "actions",
             label: "Chức năng",
@@ -222,6 +251,10 @@
         },
         password: {
           required,
+        },
+        email: {
+          required,
+          validEmail,
         },
       },
     },
